@@ -6,7 +6,8 @@ var localStorage = require('localStorage')
 
 const uniqueRandom = require('unique-random');
 const randunique = uniqueRandom(10000000000, 99999999999);
-
+var Urllinks="http://182.156.204.228:3555"; 
+//var Urllinks="http://182.156.204.228:3555";
 module.exports = {  
  
 mytaskwp:(req, res) =>   { 
@@ -46,9 +47,9 @@ var now = new Date();
 
          //let usernameQuery1 = "SELECT * FROM `wp_comments` WHERE `comment_post_ID` = '" + result1[j].comment_post_ID + "' and DATE(comment_date) =DATE('"+datecurrent+"')";  
 
-         let usernameQuery1 = "SELECT * FROM `wp_comments` a join wp_usermeta b on a.user_id=b.user_id WHERE a.`comment_post_ID` = '" + result1[j].comment_post_ID + "' and DATE(a.comment_date) =DATE('"+datecurrent+"')  and b.meta_key='_attachments'"
+         let usernameQuery1 = "SELECT * FROM `wp_comments` a join wp_usermeta b on a.user_id=b.user_id WHERE a.`comment_post_ID` = '" + result1[j].comment_post_ID + "' and DATE(a.comment_date) =DATE('"+datecurrent+"')  and b.meta_key='_attachments' group by a.comment_ID"
 
-         console.log(usernameQuery1)
+         console.log(usernameQuery1)  
          db.query(usernameQuery1, (err, result) => {        
              if (err) {
                 return res.status(500).json({ message: 'errr5', status :500, msg:err });
@@ -77,7 +78,7 @@ var now = new Date();
              
               if(result[i].comment_img != null) { 
                 imgmetavalue=result[i].comment_img;  
-                imgmetatitle=imgmetavalue.split('http://182.156.204.228:3555/assets/img/')[1]; 
+                imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1]; 
                 let fileext=imgmetatitle.split('.')[1];
                 imgmetaext="."+fileext;   
                }       
@@ -314,7 +315,7 @@ mytasklistwp:(req, res) =>   {
      if(categorywp !=""){
       usernameQuery1 += "and b.term_taxonomy_id='"+categorywp+"'"; 
    }
-      usernameQuery1 +="group by ID"; 
+      usernameQuery1 +="group by ID order by ID DESC";   
    console.log("usernameQuery1==",usernameQuery1); 
       let usernameQuery = " SELECT * FROM `wp_users` WHERE `ID` = '" + userid + "'"; 
         db.query(usernameQuery, (err, result) => {        
@@ -566,7 +567,7 @@ let metaarrval;
                   return res.status(500).json({ message: 'errr4', status :500, wpstatus:0 });
               }
               var strIP = localStorage.getItem('ipInfo');   
-              var strIPClient = JSON.parse(strIP).clientIp; 
+              var strIPClient = JSON.parse(strIP).clientIp;  
               let usernameQuery3 = "INSERT INTO `wp_comments` ( `comment_post_ID`, `comment_author`, `comment_author_email`, `comment_author_url`, `comment_author_IP`, `comment_date`, `comment_date_gmt`, `comment_content`, `comment_karma`, `comment_approved`, `comment_agent`, `comment_type`, `comment_parent`, `user_id`) VALUES ('" +
               wppostID + "', '" + Usrauther + "', '" + Usremail + "', '" + Usrurl + "', '" + strIPClient + "', '" + datecurrent + "', '" + datecurrent + "','"+ postcontent + "', '0', '1', '', '', '0', '" + userid + "')";    
               db.query(usernameQuery3, (err3, result3) => { 
@@ -603,17 +604,18 @@ let metaarrval;
     if (err) {  return res.status(500).json({ message: 'errr5',status :500,msg:err,wpstatus:0 });  }
 
     var now = new Date();
-    datecurrent = dateFormat(now, "yyyy-mm-dd HH:MM:ss"); 
-                  let usernameQuery1 = "INSERT INTO `wp_posts` (`post_author`, `post_date`, `post_date_gmt`, `post_content`, `post_title`, `post_excerpt`,`post_status`, `comment_status`, `ping_status`,`post_password`, `post_name`, `to_ping`,`pinged`, `post_modified`, `post_modified_gmt`,`post_content_filtered`, `post_parent`, `guid`,`menu_order`, `post_type`, `post_mime_type`, `comment_count`) VALUES('" + userid + "','" + datecurrent + "','" + datecurrent + "','','" + fileName + "','','inherit','open','closed','','" + fileName + "','','','" + datecurrent + "','" + datecurrent + "','','0','http://182.156.204.228:3555/assets/img/"+fileName+"','0','attachment','image/jpg','0' )"; 
+    datecurrent = dateFormat(now, "yyyy-mm-dd HH:MM:ss");
+    let finalimglink=Urllinks+"/assets/img/"+ fileName;
+                  let usernameQuery1 = "INSERT INTO `wp_posts` (`post_author`, `post_date`, `post_date_gmt`, `post_content`, `post_title`, `post_excerpt`,`post_status`, `comment_status`, `ping_status`,`post_password`, `post_name`, `to_ping`,`pinged`, `post_modified`, `post_modified_gmt`,`post_content_filtered`, `post_parent`, `guid`,`menu_order`, `post_type`, `post_mime_type`, `comment_count`) VALUES('" + userid + "','" + datecurrent + "','" + datecurrent + "','','" + fileName + "','','inherit','open','closed','','" + fileName + "','','','" + datecurrent + "','" + datecurrent + "','','0','"+finalimglink+"','0','attachment','image/jpg','0' )"; 
       db.query(usernameQuery1, (err1, result1) => {        
       if (err1) { return res.status(500).json({ message: 'errr5', status :500, msg:err1, wpstatus:0 });  }
 
       
 
-        let Qry201 = "UPDATE `wp_comments` set  comment_img='http://182.156.204.228:3555/assets/img/"+fileName+"' where comment_ID='"+commentID+"'"; 
+        let Qry201 = "UPDATE `wp_comments` set  comment_img='"+finalimglink+"' where comment_ID='"+commentID+"'"; 
         db.query(Qry201, (er201, res201) => {     });           
 
-         let usernameQuery201 = "INSERT INTO `wp_commentmeta` (`comment_id`, `meta_key`, `meta_value`) VALUES('" + commentID + "','_attachments','http://182.156.204.228:3555/assets/img/"+fileName+"')"; 
+         let usernameQuery201 = "INSERT INTO `wp_commentmeta` (`comment_id`, `meta_key`, `meta_value`) VALUES('" + commentID + "','_attachments','"+finalimglink+"')"; 
          db.query(usernameQuery201, (err201, result201) => {        
              if (err201){ return res.status(500).json({ message: 'errr5',status :500,msg:err1,wpstatus:0 }); }
       });
@@ -819,7 +821,7 @@ var now = new Date();
               if(result301.length > 0){
                  imgmetavalue=result301[0].meta_value; 
                  let commentID=result301[0].comment_id
-                 imgmetatitle=imgmetavalue.split('http://182.156.204.228:3555/assets/img/')[1]; 
+                 imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1]; 
                 let fileext=imgmetatitle.split('.')[1];
                 console.log("fileext==",fileext);  
                 var finalindex="";
@@ -889,5 +891,5 @@ taskfeedback:(req, res) =>   {
   });
 }, 
 
-
+   
 };

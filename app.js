@@ -14,8 +14,8 @@ var getIP = require('ipware')().get_ip;
 var varyyyy;     
 //const {getHomePage} = require('./routes/index'); 
 //const {addPlayerPage, addPlayer, deletePlayer, editPlayer, editPlayerPage} = require('./routes/player');
-const { getloginwp, getresetwp , testapp } = require('./routes/securitydetail');   
-const { taskcatwp } = require('./routes/task'); 
+const { getloginwp, getresetwp , testapp , upprofilewp, getprofilewp, upprofileimgwp } = require('./routes/securitydetail');      
+const { taskcatwp } = require('./routes/task');   
 const { mytaskwp, mytaskreplywp, mytasklistwp, tasksrcwp, taskimgwp , taskoncomwp } = require('./routes/task');
 const { taskcreatewp, taskfimgwp, taskactivewp } = require('./routes/task');   
 const { taskrightside } = require('./routes/task');   
@@ -88,30 +88,29 @@ app.use(function(req, res, next) {
 // routes for the app
 
 //app.get('/', getHomePage); 
+  
 app.post("/", express.static(path.join(__dirname, "./public"))); 
  
-//app.post('/add', getdataall);   
+//Routes which handle requests
  
-
 app.post('/login', getloginwp); 
    
 app.post('/test', testapp); 
 
 app.post('/forgetpass', getresetwp);   
 
- 
-//const userRoutes = require('./user'); 
-//Routes which handle requests
-//app.use('/user',userRoutes);  
- 
 app.post('/mytask', mytaskwp);
 
-
 app.post('/mytaskreply',mytaskreplywp);
-app.post('/tasklist',mytasklistwp);   
-app.post('/tasksrc',tasksrcwp); 
-app.post('/taskcat',taskcatwp);  
+
+app.post('/tasklist',mytasklistwp);
+
+app.post('/tasksrc',tasksrcwp);
+
+app.post('/taskcat',taskcatwp); 
+
 app.post('/taskcreate',taskcreatewp); 
+
 app.post('/dashboard',dashboardwp);     
 
 app.post('/taskcreateimg',taskfimgwp); 
@@ -130,13 +129,11 @@ app.post('/taskfeedback',taskfeedback);
     
 app.post('/notification',notificationwp);   
 
+app.post('/upprofile',upprofilewp);
 
+app.post('/getprofile',getprofilewp); 
 
-
-//app.get('/add', addPlayerPage);
-//app.get('/edit/:id', editPlayerPage);
-//app.get('/delete/:id', deletePlayer);  
-//app.post('/edit/:id', editPlayer);
+app.post('/profileimg',upprofileimgwp); 
 
 // set the app to listen on the port
 app.listen(port, () => {   

@@ -11,6 +11,7 @@ module.exports = {
 
       
     getloginwp:(req, res) => {
+      console.log("login api ..."); 
          let emailid = req.body.emailid;  
          let password = req.body.password;         
          var encrytpass = encrydecry.sha1algo(req.body.password);   
@@ -85,6 +86,143 @@ module.exports = {
       });
     },
 
+
+
+    upprofilewp:(req, res) => {    
+
+      let userid = req.body.userid;
+      let billingAdd = req.body.billAdd;
+      let billingCountry = req.body.billCountry;
+      let billingState = req.body.billState;
+      let billingPin = req.body.billPin;  
+      let billingPhone = req.body.billingPhone; 
+  
+      let usernameQuery = "SELECT * FROM `wp_users` WHERE ID = '" + userid + "'";          
+      db.query(usernameQuery, (err, result) => {       
+          if (err) {
+             return res.status(500).json({ message: 'errr5', status :500, msg:err, wpstatus:-1  });
+          }
+          if (result.length > 0) {
+
+            let Qry1 = "UPDATE `wp_usermeta` SET meta_value='"+billingPhone+"'  WHERE user_id = '" + userid + "' and meta_key='billing_phone'";         
+            db.query(Qry1, () => {      });
+
+          let Qry2 = "SELECT * from `wp_usermeta` where meta_key='billing_address_1' and user_id = '" + userid + "'"; 
+             db.query(Qry2, (err2, result2) => {  
+              if (result2.length > 0) {
+                let Qry3 = "UPDATE `wp_usermeta` SET meta_value='"+billingAdd+"'  WHERE user_id = '" + userid + "' and meta_key='billing_address_1'";         
+                db.query(Qry3, () => {   });
+              }
+              else {
+                let Qry4 = "INSERT INTO `wp_usermeta` SET meta_value='"+billingAdd+"', user_id = '" + userid + "', meta_key='billing_address_1'";         
+                db.query(Qry4, () => {   });
+              }
+            });
+
+ 
+            let Qry5 = "SELECT * from `wp_usermeta` where meta_key='billing_country' and user_id = '" + userid + "'";         
+            db.query(Qry5, (err5, result5) => {  
+              if (result5.length > 0) {
+                let Qry6 = "UPDATE `wp_usermeta` SET meta_value='"+billingCountry+"'  WHERE user_id = '" + userid + "' and meta_key='billing_country'";         
+                db.query(Qry6, () => {   });
+              }
+              else {
+                let Qry7 = "INSERT INTO `wp_usermeta` SET meta_value='"+billingCountry+"', user_id = '" + userid + "', meta_key='billing_country'";         
+                db.query(Qry7, () => {   });
+              }
+            });
+
+
+            let Qry8 = "SELECT  * from `wp_usermeta` where meta_key='billing_state' and user_id = '" + userid + "'";         
+            db.query(Qry8, (err8, result8) => {  
+              if (result8.length > 0) {
+                let Qry9 = "UPDATE `wp_usermeta` SET meta_value='"+billingState+"'  WHERE user_id = '" + userid + "' and meta_key='billing_state'";         
+                db.query(Qry9, () => {   });
+              }
+              else {
+                let Qry10 = "INSERT INTO `wp_usermeta` SET meta_value='"+billingState+"', user_id = '" + userid + "', meta_key='billing_state'";         
+                db.query(Qry10, () => {   });
+              }
+            });
+
+
+            let Qry11 = "SELECT * from `wp_usermeta` where meta_key='billing_postcode' and user_id = '" + userid + "'";         
+            db.query(Qry11, (err11, result11) => {   
+              if (result11.length > 0) {
+                let Qry12 = "UPDATE `wp_usermeta` SET meta_value='"+billingPin+"'  WHERE user_id = '" + userid + "' and meta_key='billing_postcode'";         
+                db.query(Qry12, () => {   });
+              }
+              else {    
+                let Qry13 = "INSERT INTO `wp_usermeta` SET meta_value='"+billingPin+"', user_id = '" + userid + "', meta_key='billing_postcode'";         
+                db.query(Qry13, () => {   });
+              }
+            });
+            return res.status(200).json({ status :200, message:"Profile updated successfully." , wpstatus:1  });   
+          } 
+          else {  
+             return res.status(200).json({  message: 'you are not authorized to use', status :200, wpstatus:0  }); 
+      }  
+      });
+  },
+
+
+  getprofilewp:(req, res) => {      
+
+    let userid = req.body.userid;  
+
+    let usernameQuery = "SELECT * FROM `wp_users` WHERE ID = '" + userid + "'";          
+    db.query(usernameQuery, (err, result) => {       
+        if (err) {  return res.status(500).json({ message: 'errr5', status :500, msg:err, wpstatus:-1  });   }
+        if (result.length > 0) {
+          let Qry1 = "SELECT * FROM `wp_usermeta` WHERE user_id = '" + userid + "'";         
+          db.query(Qry1, (err1, result1) => {   
+            if (err1) {  return res.status(500).json({ message: 'errr5', status :500, msg:err1, wpstatus:-1  });   }
+            if (result1.length > 0) {
+              console.log("result1==",result1); 
+              return res.status(200).json({ status :200, message:"Profile updated successfully." , wpstatus:1, getdata:result1  }); 
+           }
+          }); 
+        } 
+        else {  
+           return res.status(200).json({  message: 'you are not authorized to use', status :200, wpstatus:0  }); 
+    }  
+    });
+},
+
+upprofileimgwp:(req, res) => {      
+  let userid = req.body.userid;  
+  let profileimg ="";
+  let usernameQuery = "SELECT * FROM `wp_users` WHERE ID = '" + userid + "'";          
+  db.query(usernameQuery, (err, result) => {       
+      if (err) {  return res.status(500).json({ message: 'errr5', status :500, msg:err, wpstatus:-1  });   }
+      if (result.length > 0) {
+  let uploadedFile = req.files.file;
+  let fileName = uploadedFile.name;   
+  let fileExtension = uploadedFile.mimetype.split('/')[1]; 
+  console.log("fileExtension==",fileExtension) 
+  uploadedFile.mv(`public/assets/img/${fileName}`, (err ) => {    
+    if (err) {  return res.status(500).json({ message: 'errr5',status :500,msg:err,wpstatus:0 });  }
+        let Qry11 = "SELECT * from `wp_usermeta` where meta_key='_attachments' and user_id = '" + userid + "'";         
+        db.query(Qry11, (err11, result11) => {   
+          if (result11.length > 0) {
+            let Qry12 = "UPDATE `wp_usermeta` SET meta_value='"+profileimg+"'  WHERE user_id = '" + userid + "' and meta_key='_attachments'";         
+            db.query(Qry12, () => {   });
+          }
+          else {    
+            let Qry13 = "INSERT INTO `wp_usermeta` SET meta_value='"+profileimg+"', user_id = '" + userid + "', meta_key='_attachments'";         
+            db.query(Qry13, () => {   });
+          }
+        });
+      return res.status(200).json({status :200,message:"Profile updated successfully.",wpstatus:1,getdata:result1}); 
+    }); 
+  }
+      else {  
+         return res.status(200).json({  message: 'you are not authorized to use', status :200, wpstatus:0  }); 
+  }  
+  });
+},
+  
+  
 testapp:(req, res) =>   {
   let agent_array =[]; 
   let metaarrval ;
