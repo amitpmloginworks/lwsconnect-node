@@ -7,7 +7,7 @@ var localStorage = require('localStorage')
 const uniqueRandom = require('unique-random');
 const randunique = uniqueRandom(10000000000, 99999999999);
 //var Urllinks="http://182.156.204.228:3555"; 
-var Urllinks="http://ec2-13-58-246-109.us-east-2.compute.amazonaws.com:3555";   
+var Urllinks="http://ec2-13-58-246-109.us-east-2.compute.amazonaws.com:3555"; 
 module.exports = {  
  
 mytaskwp:(req, res) =>   { 
@@ -797,6 +797,7 @@ var now = new Date();
   
   let imgmetavalue;
   let imgmetatitle;
+  let imgmetaext;
 
   let PostStatus="";
 
@@ -812,13 +813,27 @@ var now = new Date();
         let incrementval = 0; 
       for (var i = 0; i < result.length; i++){    
         var datecurrent = dateFormat(result[i].comment_date, "dd mmm yyyy");
+
+        if(result[i].comment_img != null) { 
+          imgmetavalue=result[i].comment_img;    
+          imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1];
+          let fileext=imgmetatitle.split('.')[1];
+          imgmetaext="."+fileext;   
+         }  
+
+
         third_array.push(result[i].comment_ID);
-                 second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"), wptitle:"",wpextension:"",wpurl:"",datecurrent:datecurrent,comment_hour:result[i].comment_hour });      
+
+                 second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"), wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:imgmetavalue,datecurrent:datecurrent,comment_hour:result[i].comment_hour });  
+                 
+                 
+         
+/*
                  let usernameQuery301 = "SELECT * FROM `wp_commentmeta` where comment_id='" +result[i].comment_ID + "'";  
                    console.log("usernameQuery301==",usernameQuery301)
                  db.query(usernameQuery301, (err301, result301) => {
                  if(err301) {  return res.status(500).json({ message: 'errr', status :500, wpstatus:0 });  } 
-              if(result301.length > 0){
+              if(result301.length > 0){ 
                  imgmetavalue=result301[0].meta_value; 
                  let commentID=result301[0].comment_id
                  imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1]; 
@@ -831,11 +846,9 @@ var now = new Date();
                  second_array[finalindex].wpextension="."+fileext; 
                  finalindex=""; 
             }
-            incrementval++
-            console.log("incrementval=="+incrementval+"=="+i);   
-        if(incrementval==i) {  
-          return res.status(200).json({ status :200, wpstatus:1 , final_array:second_array,PostStatus:PostStatus });  
-        }
+*/
+
+
           //console.log("second_array==",second_array);
          // forth_array=   second_array  
           //console.log("forth_array==",forth_array.length); 
@@ -846,7 +859,20 @@ var now = new Date();
                 //  return res.status(200).json({ status :200, final_array:second_array });  
                // }  
              // },1000); 
-         });  
+
+        // });    // commentmeta table end here...
+
+ 
+         incrementval++
+         console.log("incrementval=="+incrementval+"=="+i);     
+     if(incrementval==i) {  
+       return res.status(200).json({ status :200, wpstatus:1 , final_array:second_array,PostStatus:PostStatus });  
+     }
+
+
+
+
+
        }     
       } 
       else {     return res.status(200).json({  message: 'No record found', status :200  });  }
