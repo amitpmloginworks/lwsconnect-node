@@ -846,6 +846,14 @@ var now = new Date();
                  second_array[finalindex].wpextension="."+fileext; 
                  finalindex=""; 
             }
+
+                 incrementval++
+         console.log("incrementval=="+incrementval+"=="+i);     
+     if(incrementval==i) {  
+       return res.status(200).json({ status :200, wpstatus:1 , final_array:second_array,PostStatus:PostStatus });  
+     }
+
+         });    // commentmeta table end here...
 */
 
 
@@ -858,13 +866,10 @@ var now = new Date();
                 //if(second_array.length ==i){         
                 //  return res.status(200).json({ status :200, final_array:second_array });  
                // }  
-             // },1000); 
-
-        // });    // commentmeta table end here...
-
+             // },1000);  
  
          incrementval++
-         console.log("incrementval=="+incrementval+"=="+i);     
+         console.log("incrementval=="+incrementval+"=="+i+"=="+second_array.length+"=="+result.length);     
      if(incrementval==i) {  
        return res.status(200).json({ status :200, wpstatus:1 , final_array:second_array,PostStatus:PostStatus });  
      }
