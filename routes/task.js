@@ -870,7 +870,7 @@ var now = new Date();
  
          incrementval++
          console.log("incrementval=="+incrementval+"=="+i+"=="+second_array.length+"=="+result.length);     
-     if(incrementval==i) {  
+     if(second_array.length==result.length) {      
        return res.status(200).json({ status :200, wpstatus:1 , final_array:second_array,PostStatus:PostStatus });  
      }
 
