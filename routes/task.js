@@ -6,8 +6,8 @@ var localStorage = require('localStorage')
 
 const uniqueRandom = require('unique-random');
 const randunique = uniqueRandom(10000000000, 99999999999);
-var Urllinks="http://182.156.204.228:3555"; 
-//var Urllinks="http://182.156.204.228:3555";
+//var Urllinks="http://182.156.204.228:3555"; 
+var Urllinks="http://ec2-13-58-246-109.us-east-2.compute.amazonaws.com:3555";   
 module.exports = {  
  
 mytaskwp:(req, res) =>   { 
@@ -77,8 +77,8 @@ var now = new Date();
               } 
              
               if(result[i].comment_img != null) { 
-                imgmetavalue=result[i].comment_img;  
-                imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1]; 
+                imgmetavalue=result[i].comment_img;    
+                imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1];
                 let fileext=imgmetatitle.split('.')[1];
                 imgmetaext="."+fileext;   
                }       
