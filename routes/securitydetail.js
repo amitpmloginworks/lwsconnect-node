@@ -477,8 +477,11 @@ paymentwp:(req, res) => {
   let query55="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_wcpdf_invoice_settings',meta_value='"+invoiceSet+"'";
   db.query(query55, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });   
   let query56=" INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_wcpdf_invoice_date',meta_value='"+timestamp+"'";
-  db.query(query56, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });  
-			 
+  db.query(query56, (errr,results) => { if(errr){ }  
+  SetIDVal=SetIDVal+1;  
+  console.log("SetIDVal=",SetIDVal);  
+	return res.status(200).json({ status :200, message:"Payment received successfully." , wpstatus:1  });
+  });  		 
 console.log("SetIDVal==",SetIDVal); 
 if(SetIDVal == 55){  
 	return res.status(200).json({ status :200, message:"Payment received successfully." , wpstatus:1  });  
