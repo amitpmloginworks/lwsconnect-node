@@ -865,19 +865,14 @@ var now = new Date();
                 //final_array.push({ modifydate:datemodify, second_array:forth_array });   
                 //if(second_array.length ==i){         
                 //  return res.status(200).json({ status :200, final_array:second_array });  
-               // }  
+               // }     
              // },1000);  
  
          incrementval++
          console.log("incrementval=="+incrementval+"=="+i+"=="+second_array.length+"=="+result.length);     
      if(second_array.length==result.length) {      
        return res.status(200).json({ status :200, wpstatus:1 , final_array:second_array,PostStatus:PostStatus });  
-     }
-
-
-
-
-
+     }   
        }     
       } 
       else {     return res.status(200).json({  message: 'No record found', status :200  });  }
