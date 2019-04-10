@@ -362,25 +362,124 @@ paymentwp:(req, res) => {
               WpPostID=result1.insertId;
 
               let Query2 ="UPDATE wp_posts SET `guid`='https://loginworks.net/portal/?post_type=shop_order&#038;p="+WpPostID+"' where ID='"+WpPostID+"'";
-              db.query(Query2, () => { SetIDVal=SetIDVal+1;   }); 
+              db.query(Query2, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  }); 
 
               let Query3 ="INSERT INTO `wp_comments` SET `comment_post_ID`='"+WpPostID+"',comment_author='WooCommerce',comment_author_email='woocommerce@loginworks.net',comment_author_url='',comment_author_IP='',comment_date='"+datecurrent+"',comment_date_gmt='"+datecurrent+"',comment_content='Payment to be made upon delivery. Order status changed from Pending payment to Processing.',comment_karma='0',comment_approved='1',comment_agent='WooCommerce',comment_type='order_note',comment_parent='0',user_id='0'";
-              db.query(Query3, () => { SetIDVal=SetIDVal+1;  });   
-
+              db.query(Query3, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal1=",SetIDVal);  }); 
               let Query4 ="INSERT INTO `wp_woocommerce_order_items` SET `order_id`='"+WpPostID+"',order_item_name='"+OrderItem+"',order_item_type='line_item'";
-              db.query(Query4, () => { SetIDVal=SetIDVal+1;  });  
+              db.query(Query4, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal2=",SetIDVal);  });   
 
               let Query5 ="UPDATE `wp_transaction` SET `order_item_name`='"+OrderItem+"',balance_hours='"+BalHours+"',total_hours='"+TotalHours+"' where user_id='"+userid+"'";
-              db.query(Query5, () => { SetIDVal=SetIDVal+1;   });   
+              db.query(Query5, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal3=",SetIDVal);  });   
  
               let Query6 ="UPDATE `wp_hours` SET `order_item_name`='"+OrderItem+"',balance_hours='"+BalHours+"',total_hours='"+TotalHours+"' where user_id='"+userid+"'"; 
-              db.query(Query6, () => { SetIDVal=SetIDVal+1;   }); 
+              db.query(Query6, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal4=",SetIDVal);  });    
 
              let invoiceSet ='a:18:{s:24:"display_shipping_address";s:0:"";s:13:"display_email";s:1:"1";s:13:"display_phone";s:1:"1";s:12:"display_date";s:12:"invoice_date";s:14:"display_number";s:14:"invoice_number";s:19:"attach_to_email_ids";a:8:{s:9:"new_order";s:1:"1";s:15:"cancelled_order";s:0:"";s:12:"failed_order";s:0:"";s:22:"customer_on_hold_order";s:0:"";s:25:"customer_processing_order";s:0:"";s:24:"customer_completed_order";s:1:"1";s:23:"customer_refunded_order";s:1:"1";s:16:"customer_invoice";s:1:"1";}s:7:"enabled";s:1:"1";s:13:"number_format";a:3:{s:6:"prefix";s:29:"[invoice_year][invoice_month]";s:6:"suffix";s:0:"";s:7:"padding";s:1:"5";}s:18:"my_account_buttons";s:9:"available";s:10:"paper_size";s:2:"a4";s:15:"font_subsetting";b:0;s:11:"header_logo";s:3:"561";s:9:"shop_name";a:1:{s:7:"default";s:25:"Loginworks Softwares Inc.";}s:12:"shop_address";a:1:{s:7:"default";s:63:"4870 Sadler Road, Suit 300 Office 319, Glen Allen, VA, US-23060";}s:6:"footer";a:1:{s:7:"default";s:0:"";}s:7:"extra_1";a:1:{s:7:"default";s:0:"";}s:7:"extra_2";a:1:{s:7:"default";s:0:"";}s:7:"extra_3";a:1:{s:7:"default";s:0:"";}}'
 
-              let Query7 ="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_key',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_customer_user',meta_value='"+userid+"';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_payment_method',meta_value='online';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_payment_method_title',meta_value='Paypal';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_transaction_id',meta_value='"+PaypalTxnID+"';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_customer_ip_address',meta_value='"+strIPClient+"';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_customer_user_agent',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_created_via',meta_value='checkout';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_date_completed',meta_value='"+datecurrent+"';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_completed_date',meta_value='"+datecurrent+"';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_date_paid',meta_value='"+datecurrent+"';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_paid_date',meta_value='"+datecurrent+"';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_cart_hash',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='	_billing_first_name',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_last_name',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_company',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_address_1',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_address_2',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_city',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_state',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_postcode',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_country',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_email',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_phone',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_first_name',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_last_name',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_company',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_address_1',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_address_2',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_city',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_state',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_postcode',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_country',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_currency',meta_value='USD';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_cart_discount',meta_value='0';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_cart_discount_tax',meta_value='0';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_shipping',meta_value='0.00';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_shipping_tax',meta_value='0';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_tax',meta_value='0';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_total',meta_value='"+OrderAmt+"';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_version',meta_value='3.5.3';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_prices_include_tax',meta_value='no';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_address_index',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='	_shipping_address_index',meta_value='';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='	_download_permissions_granted',meta_value='yes';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_recorded_sales',meta_value='yes';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_recorded_coupon_usage_counts',meta_value='yes';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_stock_reduced',meta_value='yes';INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_wcpdf_invoice_settings',meta_value='"+invoiceSet+"'; INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_wcpdf_invoice_date',meta_value='"+timestamp+"';"; 
-			  console.log("Query7==",Query7)
-              db.query(Query7, () => { SetIDVal=SetIDVal+1;  });   
+               
+			   let query7 ="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_key',meta_value=''";
+  db.query(query7, () => { SetIDVal=SetIDVal+1;   });  
+  let query8="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_customer_user',meta_value='"+userid+"'";
+  db.query(query8, () => { SetIDVal=SetIDVal+1;   });  
+  let query9="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_payment_method',meta_value='online'";
+  db.query(query9, () => { SetIDVal=SetIDVal+1;   });  
+  let query10="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_payment_method_title',meta_value='Paypal'";
+  db.query(query10, () => { SetIDVal=SetIDVal+1;   });  
+  let query11="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_transaction_id',meta_value='"+PaypalTxnID+"'";
+  db.query(query11, () => { SetIDVal=SetIDVal+1;   });  
+  let query12="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_customer_ip_address',meta_value='"+strIPClient+"'";
+  db.query(query12, () => { SetIDVal=SetIDVal+1;   });  
+  let query13="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_customer_user_agent',meta_value=''";
+  db.query(query13, () => { SetIDVal=SetIDVal+1;   });  
+  let query14="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_created_via',meta_value='checkout'";
+  db.query(query14, () => { SetIDVal=SetIDVal+1;   });  
+  let query15="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_date_completed',meta_value='"+datecurrent+"'";
+  db.query(query15, () => { SetIDVal=SetIDVal+1;   });  
+  let query16="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_completed_date',meta_value='"+datecurrent+"'";
+  db.query(query16, () => { SetIDVal=SetIDVal+1;   });  
+  let query17="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_date_paid',meta_value='"+datecurrent+"'";
+  db.query(query17, () => { SetIDVal=SetIDVal+1;   }); 
+  let query18="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_paid_date',meta_value='"+datecurrent+"'";
+  db.query(query18, () => { SetIDVal=SetIDVal+1;   }); 
+  let query19="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_cart_hash',meta_value=''";
+  db.query(query19, () => { SetIDVal=SetIDVal+1;   });  
+  let query20="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='	_billing_first_name',meta_value=''";
+  db.query(query20, () => { SetIDVal=SetIDVal+1;   });  
+  let query21="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_last_name',meta_value=''";
+  db.query(query21, () => { SetIDVal=SetIDVal+1;   });  
+  let query22="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_company',meta_value=''";
+  db.query(query22, () => { SetIDVal=SetIDVal+1;   });  
+  let query23="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_address_1',meta_value=''";
+  db.query(query23, () => { SetIDVal=SetIDVal+1;   });  
+  let query24="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_address_2',meta_value=''";
+  db.query(query24, () => { SetIDVal=SetIDVal+1;   });  
+  let query25="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_city',meta_value=''";
+  db.query(query25, () => { SetIDVal=SetIDVal+1;   });  
+  let query26="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_state',meta_value=''";
+  db.query(query26, () => { SetIDVal=SetIDVal+1;   }); 
+  let query27="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_postcode',meta_value=''";
+  db.query(query27, () => { SetIDVal=SetIDVal+1;   });  
+  let query28="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_country',meta_value=''";
+  db.query(query28, () => { SetIDVal=SetIDVal+1;   });  
+  let query29="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_email',meta_value=''";
+  db.query(query29, () => { SetIDVal=SetIDVal+1;   });  
+  let query30="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_phone',meta_value=''";
+  db.query(query30, () => { SetIDVal=SetIDVal+1;   });  
+  let query31="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_first_name',meta_value=''";
+  db.query(query31, () => { SetIDVal=SetIDVal+1;   });  
+  let query32="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_last_name',meta_value=''";
+  db.query(query32, () => { SetIDVal=SetIDVal+1;   });  
+  let query33="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_company',meta_value=''";
+  db.query(query33, () => { SetIDVal=SetIDVal+1;   });  
+  let query34="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_address_1',meta_value=''";
+  db.query(query34, () => { SetIDVal=SetIDVal+1;   });  
+  let query35="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_address_2',meta_value=''";
+  db.query(query35, () => { SetIDVal=SetIDVal+1;   });  
+  let query36="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_city',meta_value=''";
+  db.query(query36, () => { SetIDVal=SetIDVal+1;   }); 
+  let query37="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_state',meta_value=''";
+  db.query(query37, () => { SetIDVal=SetIDVal+1;   });  
+  let query38="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_postcode',meta_value=''";
+  db.query(query38, () => { SetIDVal=SetIDVal+1;   });  
+  let query39="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_country',meta_value=''";
+  db.query(query39, () => { SetIDVal=SetIDVal+1;   });  
+  let query40="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_currency',meta_value='USD'";
+  db.query(query40, () => { SetIDVal=SetIDVal+1;   });  
+  let query41="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_cart_discount',meta_value='0'";
+  db.query(query41, () => { SetIDVal=SetIDVal+1;   });  
+  let query42="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_cart_discount_tax',meta_value='0'";
+  db.query(query42, () => { SetIDVal=SetIDVal+1;   });  
+  let query43="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_shipping',meta_value='0.00'";
+  db.query(query43, () => { SetIDVal=SetIDVal+1;   });  
+  let query44="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_shipping_tax',meta_value='0'";
+  db.query(query44, () => { SetIDVal=SetIDVal+1;   }); 
+  let query45="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_tax',meta_value='0'";
+  db.query(query45, () => { SetIDVal=SetIDVal+1;   });  
+  let query46="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_total',meta_value='"+OrderAmt+"'";
+  db.query(query46, () => { SetIDVal=SetIDVal+1;   });  
+  let query47="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_version',meta_value='3.5.3'";
+  db.query(query47, () => { SetIDVal=SetIDVal+1;   }); 
+  let query48="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_prices_include_tax',meta_value='no'";
+  db.query(query48, () => { SetIDVal=SetIDVal+1;   });  
+  let query49="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_address_index',meta_value=''";
+  db.query(query49, () => { SetIDVal=SetIDVal+1;   });  
+  let query50="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='	_shipping_address_index',meta_value=''";
+  db.query(query50, () => { SetIDVal=SetIDVal+1;   });  
+  let query51="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='	_download_permissions_granted',meta_value='yes'";
+  db.query(query51, () => { SetIDVal=SetIDVal+1;   }); 
+  let query52="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_recorded_sales',meta_value='yes'";
+  db.query(query52, () => { SetIDVal=SetIDVal+1;   });  
+  let query53="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_recorded_coupon_usage_counts',meta_value='yes'";
+  db.query(query53, () => { SetIDVal=SetIDVal+1;   });  
+  let query54="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_stock_reduced',meta_value='yes'";
+  db.query(query54, () => { SetIDVal=SetIDVal+1;   });  
+  let query55="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_wcpdf_invoice_settings',meta_value='"+invoiceSet+"'";
+  db.query(query55, () => { SetIDVal=SetIDVal+1;   });  
+  let query56=" INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_wcpdf_invoice_date',meta_value='"+timestamp+"'";
+  db.query(query56, () => { SetIDVal=SetIDVal+1;   });  
+
+			 
 console.log("SetIDVal==",SetIDVal); 
 if(SetIDVal == 6){
 	return res.status(200).json({ status :200, message:"Payment received successfully." , wpstatus:1  });  
