@@ -14,7 +14,7 @@ var getIP = require('ipware')().get_ip;
 var varyyyy;     
 //const {getHomePage} = require('./routes/index'); 
 //const {addPlayerPage, addPlayer, deletePlayer, editPlayer, editPlayerPage} = require('./routes/player');
-const { getloginwp, getresetwp , testapp , upprofilewp, getprofilewp, upprofileimgwp, paymentwp } = require('./routes/securitydetail');      
+const { getloginwp, getresetwp , testapp , upprofilewp, getprofilewp, upprofileimgwp, paymentwp, BuyAdditionalwp } = require('./routes/securitydetail');      
 const { taskcatwp } = require('./routes/task');   
 const { mytaskwp, mytaskreplywp, mytasklistwp, tasksrcwp, taskimgwp , taskoncomwp } = require('./routes/task');
 const { taskcreatewp, taskfimgwp, taskactivewp } = require('./routes/task');   
@@ -135,7 +135,11 @@ app.post('/getprofile',getprofilewp);
 
 app.post('/profileimg',upprofileimgwp); 
 
-app.post('/payment',paymentwp)
+app.post('/payment',paymentwp);
+
+app.post('/buyadditional',BuyAdditionalwp);  
+
+
 
 // set the app to listen on the port
 app.listen(port, () => {   
