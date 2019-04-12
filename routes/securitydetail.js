@@ -338,10 +338,12 @@ paymentwp:(req, res) => {
   let TotalHours=req.body.TotalHours;
   let OrderAmt=req.body.OrderAmt;    
   let PaypalTxnID=req.body.PaypalTxnID;
+  let PaidDate=req.body.PaidDate;    
 
   var now = new Date();
   var timestamp=now.getTime();
   var datecurrent = dateFormat(now, "yyyy-mm-dd HH:MM:ss"); 
+  var PaidDate = dateFormat(PaidDate, "yyyy-mm-dd HH:MM:ss"); 
   let posttitle=" Order &ndash; "+dateFormat(now, "mmmm dd, yyyy")+" @ "+dateFormat(now, "h:MM tt");
   let PostName="order-"+dateFormat(now, "mmm")+"-"+dateFormat(now, "dd")+"-"+dateFormat(now, "yyyy")+"-"+dateFormat(now, "hMM-tt"); 
  
@@ -398,9 +400,9 @@ paymentwp:(req, res) => {
   db.query(query15, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });   
   let query16="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_completed_date',meta_value='"+datecurrent+"'";
   db.query(query16, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });   
-  let query17="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_date_paid',meta_value='"+datecurrent+"'";
+  let query17="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_date_paid',meta_value='"+PaidDate+"'";
   db.query(query17, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });  
-  let query18="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_paid_date',meta_value='"+datecurrent+"'";
+  let query18="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_paid_date',meta_value='"+PaidDate+"'";
   db.query(query18, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });  
   let query19="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_cart_hash',meta_value=''";
   db.query(query19, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });   
