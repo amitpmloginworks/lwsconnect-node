@@ -512,34 +512,34 @@ if(SetIDVal == 55){
             CurrentHour=result11[0].order_item_name
 
             if(CurrentHour=="Per Hour"){
-              final_array.push({ ItemName:"1 HOURS",ItemPrice:"$30",ItemSaveAmt:"$31",ItemTime:"1 hour",satus:"1",DItemName:"Per Hour",DBal:"1",DTotal:"1" });
+              final_array.push({ ItemName:"1 HOUR",ItemPrice:"$30",ItemSaveAmt:"$31",ItemTime:"1 hour",status:"1",DItemName:"Per Hour",DBal:"1",DTotal:"1" });
             }
             else{
-              final_array.push({ ItemName:"1 HOURS",ItemPrice:"$30",ItemSaveAmt:"$31",ItemTime:"1 hour",satus:"0",DItemName:"Per Hour",DBal:"1",DTotal:"1" });
+              final_array.push({ ItemName:"1 HOUR",ItemPrice:"$30",ItemSaveAmt:"$31",ItemTime:"1 hour",status:"0",DItemName:"Per Hour",DBal:"1",DTotal:"1" });
             }
 
             if(CurrentHour=="10 Hours Bucket"){
-              final_array.push({ ItemName:"1O HOURS",ItemPrice:"$269",SaveAmt:"$31",ItemTime:"10 hours",satus:"1",DItemName:"10 Hours Bucket",DBal:"10",DTotal:"10" });
+              final_array.push({ ItemName:"1O HOURS",ItemPrice:"$269",SaveAmt:"$31",ItemTime:"10 hours",status:"1",DItemName:"10 Hours Bucket",DBal:"10",DTotal:"10" });
             }
             else{
-              final_array.push({ ItemName:"1O HOURS",ItemPrice:"$269",SaveAmt:"$31",ItemTime:"10 hours",satus:"0",DItemName:"10 Hours Bucket",DBal:"10",DTotal:"10" });
+              final_array.push({ ItemName:"1O HOURS",ItemPrice:"$269",SaveAmt:"$31",ItemTime:"10 hours",status:"0",DItemName:"10 Hours Bucket",DBal:"10",DTotal:"10" });
             }
          
             if(CurrentHour=="50 Hours Bucket"){
-              final_array.push({ ItemName:"5O HOURS",ItemPrice:"$1200",SaveAmt:"$300",ItemTime:"50 hours",satus:"1",DItemName:"50 Hours Bucket",DBal:"50",DTotal:"50" });
+              final_array.push({ ItemName:"5O HOURS",ItemPrice:"$1200",SaveAmt:"$300",ItemTime:"50 hours",status:"1",DItemName:"50 Hours Bucket",DBal:"50",DTotal:"50" });
             }
             else{
-              final_array.push({ ItemName:"5O HOURS",ItemPrice:"$1200",SaveAmt:"$300",ItemTime:"50 hours",satus:"0",DItemName:"50 Hours Bucket",DBal:"50",DTotal:"50" });
+              final_array.push({ ItemName:"5O HOURS",ItemPrice:"$1200",SaveAmt:"$300",ItemTime:"50 hours",status:"0",DItemName:"50 Hours Bucket",DBal:"50",DTotal:"50" });
             }
             return res.status(200).json({status :200,message:"Data received successfully.",wpstatus:1,getdata:result11,final_array:final_array});
           }
-          else {  
-          final_array.push({ ItemName:"1 HOURS",ItemPrice:"$30",ItemSaveAmt:"$31",ItemTime:"1 hour",satus:"0",DItemName:"Per Hour",DBal:"1",DTotal:"1" });
-          final_array.push({ ItemName:"1O HOURS",ItemPrice:"$269",SaveAmt:"$31",ItemTime:"10 hours",satus:"0",DItemName:"10 Hours Bucket",DBal:"10",DTotal:"10" });
-          final_array.push({ ItemName:"5O HOURS",ItemPrice:"$1200",SaveAmt:"$300",ItemTime:"50 hours",satus:"0",DItemName:"50 Hours Bucket",DBal:"50",DTotal:"50" });     
+          else {    
+          final_array.push({ ItemName:"1 HOUR",ItemPrice:"$30",ItemSaveAmt:"$31",ItemTime:"1 hour",status:"0",DItemName:"Per Hour",DBal:"1",DTotal:"1" });
+          final_array.push({ ItemName:"1O HOURS",ItemPrice:"$269",SaveAmt:"$31",ItemTime:"10 hours",status:"0",DItemName:"10 Hours Bucket",DBal:"10",DTotal:"10" });
+          final_array.push({ ItemName:"5O HOURS",ItemPrice:"$1200",SaveAmt:"$300",ItemTime:"50 hours",status:"0",DItemName:"50 Hours Bucket",DBal:"50",DTotal:"50" });     
             return res.status(200).json({status :200,message:"Data received successfully.",wpstatus:1,getdata:result11});
           }
-        });
+        });  
   }
       else {  
          return res.status(200).json({  message: 'you are not authorized to use', status :200, wpstatus:0  }); 
