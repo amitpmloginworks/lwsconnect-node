@@ -338,12 +338,12 @@ paymentwp:(req, res) => {
   let TotalHours=req.body.TotalHours;
   let OrderAmt=req.body.OrderAmt;    
   let PaypalTxnID=req.body.PaypalTxnID;
-  let PaidDate=req.body.PaidDate;    
+  let PaidDate1=req.body.PaidDate;    
 
   var now = new Date();
   var timestamp=now.getTime();
   var datecurrent = dateFormat(now, "yyyy-mm-dd HH:MM:ss"); 
-  var PaidDate = dateFormat(PaidDate, "yyyy-mm-dd HH:MM:ss"); 
+  var PaidDate = dateFormat(PaidDate1, "yyyy-mm-dd HH:MM:ss"); 
   let posttitle=" Order &ndash; "+dateFormat(now, "mmmm dd, yyyy")+" @ "+dateFormat(now, "h:MM tt");
   let PostName="order-"+dateFormat(now, "mmm")+"-"+dateFormat(now, "dd")+"-"+dateFormat(now, "yyyy")+"-"+dateFormat(now, "hMM-tt"); 
  
