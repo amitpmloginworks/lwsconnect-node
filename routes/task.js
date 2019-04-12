@@ -806,28 +806,21 @@ var now = new Date();
   if (r1) {  return res.status(500).json({ message: 'errr5', status :500, msg:r1 });   }
   if (res1.length > 0) {   
     PostStatus=res1[0].comment_status
-  let usernameQuery = "SELECT * FROM `wp_comments` WHERE `comment_post_ID` = '" + wppostID + "' order by comment_ID desc"; 
+  let usernameQuery = "SELECT * FROM `wp_comments` WHERE `comment_post_ID` = '" + wppostID + "' and user_id !='"+userid+"' order by comment_ID desc";   
   db.query(usernameQuery, (err1, result) => {        
       if (err1)   {  return res.status(500).json({ message: 'errr5', status :500, msg:err1 });     }
       if (result.length > 0) { 
         let incrementval = 0; 
       for (var i = 0; i < result.length; i++){    
         var datecurrent = dateFormat(result[i].comment_date, "dd mmm yyyy");
-
         if(result[i].comment_img != null) { 
           imgmetavalue=result[i].comment_img;    
           imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1];
           let fileext=imgmetatitle.split('.')[1];
           imgmetaext="."+fileext;   
          }  
-
-
         third_array.push(result[i].comment_ID);
-
-                 second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"), wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:imgmetavalue,datecurrent:datecurrent,comment_hour:result[i].comment_hour });  
-                 
-                 
-         
+                 second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"), wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:imgmetavalue,datecurrent:datecurrent,comment_hour:result[i].comment_hour });     
 /*
                  let usernameQuery301 = "SELECT * FROM `wp_commentmeta` where comment_id='" +result[i].comment_ID + "'";  
                    console.log("usernameQuery301==",usernameQuery301)
@@ -846,17 +839,13 @@ var now = new Date();
                  second_array[finalindex].wpextension="."+fileext; 
                  finalindex=""; 
             }
-
                  incrementval++
          console.log("incrementval=="+incrementval+"=="+i);     
      if(incrementval==i) {  
        return res.status(200).json({ status :200, wpstatus:1 , final_array:second_array,PostStatus:PostStatus });  
      }
-
          });    // commentmeta table end here...
 */
-
-
           //console.log("second_array==",second_array);
          // forth_array=   second_array  
           //console.log("forth_array==",forth_array.length); 
@@ -867,7 +856,6 @@ var now = new Date();
                 //  return res.status(200).json({ status :200, final_array:second_array });  
                // }     
              // },1000);  
- 
          incrementval++
          console.log("incrementval=="+incrementval+"=="+i+"=="+second_array.length+"=="+result.length);     
      if(second_array.length==result.length) {      
@@ -881,6 +869,10 @@ var now = new Date();
 else {  return res.status(500).json({ message: 'No record found.', status :200, wpstatus:0 });   }  
 });  
 },
+
+
+
+
 
 taskfeedback:(req, res) =>   { 
 
