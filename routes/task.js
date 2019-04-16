@@ -676,7 +676,7 @@ taskoncomwp:(req, res) =>  {
             
                 PostTitle=result1[i].post_title;   
 
-                final_array.push({ TermName:"", PostTitle:PostTitle,PostDate:PostDate,PostID:PostID,Usrauther:Usrauther,image:"",NewPost:NewPost,status:result1[i].comment_status }); 
+                final_array.push({ TermName:"", PostTitle:PostTitle,PostDate:PostDate,PostID:PostID,Usrauther:Usrauther,image:"",NewPost:NewPost,status:result1[i].comment_status,comment_hour:0 }); 
 
 
 
