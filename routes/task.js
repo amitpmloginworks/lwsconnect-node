@@ -806,7 +806,7 @@ var now = new Date();
   if (r1) {  return res.status(500).json({ message: 'errr5', status :500, msg:r1 });   }
   if (res1.length > 0) {   
     PostStatus=res1[0].comment_status
-  let usernameQuery = "SELECT * FROM `wp_comments` WHERE `comment_post_ID` = '" + wppostID + "' and user_id !='"+userid+"' order by comment_ID desc";   
+  let usernameQuery = "SELECT * FROM `wp_comments` WHERE `comment_post_ID` = '" + wppostID + "' order by comment_ID desc";   
   db.query(usernameQuery, (err1, result) => {        
       if (err1)   {  return res.status(500).json({ message: 'errr5', status :500, msg:err1 });     }
       if (result.length > 0) { 
