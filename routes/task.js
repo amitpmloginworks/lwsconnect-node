@@ -494,7 +494,7 @@ let metaarrval;
 		db.query(Query1, (err11, result11) => {        
 		if (err11) {  return res.status(500).json({ message: 'errr1', status :500, msg:err11, wpstatus:0 });   }
 		 if (result11.length > 0) {  
-			return res.status(200).json({  message: "Task Title already exist.", status :200, wpstatus:2 });   
+			return res.status(200).json({  message: "Title already exist.", status :200, wpstatus:2 });   
 		  }    
 		  else {
         Usrauther=result[0].user_nicename;
