@@ -372,12 +372,12 @@ paymentwp:(req, res) => {
               db.query(Query4, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal2=",SetIDVal);  });   
 
               //let Query5 ="UPDATE `wp_transaction` SET `order_item_name`='"+OrderItem+"',balance_hours=balance_hours+'"+BalHours+"',total_hours=total_hours+'"+TotalHours+"' where user_id='"+userid+"'";
-			  let Query5 ="UPDATE `wp_transaction` SET `order_item_name`='"+OrderItem+"',`total_hours`=total_hours+'"+TotalHours+"' where user_id='"+userid+"'";
+			  let Query5 ="UPDATE `wp_transaction` SET `order_item_name`='"+OrderItem+"',balance_hours=balance_hours+'"+BalHours+"' where user_id='"+userid+"'";
               db.query(Query5, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal3=",SetIDVal);  });      
   
   //let Query6 ="UPDATE `wp_hours` SET `order_item_name`='"+OrderItem+"',`balance_hours`=balance_hours+'"+BalHours+"',`total_hours`=total_hours+'"+TotalHours+"' where `user_id`='"+userid+"'";  
   
-              let Query6 ="UPDATE `wp_hours` SET `order_item_name`='"+OrderItem+"',`total_hours`=total_hours+'"+TotalHours+"' where `user_id`='"+userid+"'";   
+              let Query6 ="UPDATE `wp_hours` SET `order_item_name`='"+OrderItem+"',balance_hours=balance_hours+'"+BalHours+"' where `user_id`='"+userid+"'";   
               db.query(Query6, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal4=",SetIDVal);  });    
 
              let invoiceSet ='a:18:{s:24:"display_shipping_address";s:0:"";s:13:"display_email";s:1:"1";s:13:"display_phone";s:1:"1";s:12:"display_date";s:12:"invoice_date";s:14:"display_number";s:14:"invoice_number";s:19:"attach_to_email_ids";a:8:{s:9:"new_order";s:1:"1";s:15:"cancelled_order";s:0:"";s:12:"failed_order";s:0:"";s:22:"customer_on_hold_order";s:0:"";s:25:"customer_processing_order";s:0:"";s:24:"customer_completed_order";s:1:"1";s:23:"customer_refunded_order";s:1:"1";s:16:"customer_invoice";s:1:"1";}s:7:"enabled";s:1:"1";s:13:"number_format";a:3:{s:6:"prefix";s:29:"[invoice_year][invoice_month]";s:6:"suffix";s:0:"";s:7:"padding";s:1:"5";}s:18:"my_account_buttons";s:9:"available";s:10:"paper_size";s:2:"a4";s:15:"font_subsetting";b:0;s:11:"header_logo";s:3:"561";s:9:"shop_name";a:1:{s:7:"default";s:25:"Loginworks Softwares Inc.";}s:12:"shop_address";a:1:{s:7:"default";s:63:"4870 Sadler Road, Suit 300 Office 319, Glen Allen, VA, US-23060";}s:6:"footer";a:1:{s:7:"default";s:0:"";}s:7:"extra_1";a:1:{s:7:"default";s:0:"";}s:7:"extra_2";a:1:{s:7:"default";s:0:"";}s:7:"extra_3";a:1:{s:7:"default";s:0:"";}}'
