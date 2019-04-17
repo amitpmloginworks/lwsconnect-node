@@ -585,9 +585,10 @@ let metaarrval;
               return res.status(200).json({  message: "Your task has been saved successfully.", status :200, wpstatus:1 , commentID:commentID }); 
           }); 
           });     
-         }); 
-
-  }
+         });
+		 
+		  }
+		}); 
 		 
       } 
       else {      
