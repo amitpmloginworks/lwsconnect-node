@@ -352,7 +352,7 @@ paymentwp:(req, res) => {
 
   let WpPostID="";
  
-  let SetIDVal=0;
+  let SetIDVal=0; 
   console.log("login api ...");    
      let usernameQuery = "SELECT * FROM `wp_users` WHERE ID = '" + userid + "'";         
      db.query(usernameQuery, (err, result) => {      
@@ -376,7 +376,7 @@ paymentwp:(req, res) => {
               db.query(Query5, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal3=",SetIDVal);  });      
   
   //let Query6 ="UPDATE `wp_hours` SET `order_item_name`='"+OrderItem+"',`balance_hours`=balance_hours+'"+BalHours+"',`total_hours`=total_hours+'"+TotalHours+"' where `user_id`='"+userid+"'";  
-  
+   
               let Query6 ="UPDATE `wp_hours` SET `order_item_name`='"+OrderItem+"',balance_hours=balance_hours+'"+BalHours+"' where `user_id`='"+userid+"'";   
               db.query(Query6, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal4=",SetIDVal);  });    
 
