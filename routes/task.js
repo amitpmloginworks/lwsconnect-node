@@ -489,7 +489,14 @@ let metaarrval;
          return res.status(500).json({ message: 'errr1', status :500, msg:err, wpstatus:0 });
       }
       if (result.length > 0) {
-
+		  
+		let Query1 = " SELECT * FROM `wp_posts` WHERE `post_title` = '" + posttitle + "'"; 
+		db.query(Query1, (err11, result11) => {        
+		if (err11) {  return res.status(500).json({ message: 'errr1', status :500, msg:err11, wpstatus:0 });   }
+		 if (result11.length > 0) {  
+			return res.status(200).json({  message: "Task Title already exist.", status :200, wpstatus:2 });   
+		  }    
+		  else {
         Usrauther=result[0].user_nicename;
         Usremail=result[0].user_email;
         Usrurl=result[0].user_url;
@@ -578,10 +585,13 @@ let metaarrval;
               return res.status(200).json({  message: "Your task has been saved successfully.", status :200, wpstatus:1 , commentID:commentID }); 
           }); 
           });     
-         });      
+         }); 
+
+  }
+		 
       } 
       else {      
-         return res.status(200).json({ message: 'you are not authorized to use', status :200,wpstatus:0 });  
+         return res.status(200).json({ message: 'you are not authorized to use', status :200,wpstatus:2 });  
   }
 });
 
