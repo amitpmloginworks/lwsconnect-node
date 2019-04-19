@@ -34,7 +34,7 @@ var requestIp = require('request-ip');
 const db = mysql.createConnection ({
     host: '67.222.23.104',  
     user: 'pallab_portal',  
-    password: '1#ppassword',  
+    password: '1#password',  
     database: 'pallab_portal'  
 }); 
 

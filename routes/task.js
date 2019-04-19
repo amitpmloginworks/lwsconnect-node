@@ -174,6 +174,10 @@ mytaskreplywp:(req, res) =>   {
                 }
                 var strIP = localStorage.getItem('ipInfo');   
                 var strIPClient = JSON.parse(strIP).clientIp; 
+
+              let Query2="update `wp_comments` set read_comment='1' ORDER BY comment_ID DESC LIMIT 1"; 
+              db.query(Query2,(err33,result33) =>{ if (err33) { return res.status(500).json({ message: 'errr', status :500, wpstatus:0 }); } });
+   
                 let usernameQuery3 = "INSERT INTO `wp_comments` ( `comment_post_ID`, `comment_author`, `comment_author_email`, `comment_author_url`, `comment_author_IP`, `comment_date`, `comment_date_gmt`, `comment_content`, `comment_karma`, `comment_approved`, `comment_agent`, `comment_type`, `comment_parent`, `user_id`) VALUES ('" +
                 wppostID + "', '" + Usrauther + "', '" + Usremail + "', '" + Usrurl + "', '" + strIPClient + "', '" + datecurrent + "', '" + datecurrent + "','"+ postcontent + "', '0', '1', '', '', '0', '" + userid + "')";    
                 db.query(usernameQuery3, (err3, result3) => {
@@ -811,79 +815,29 @@ var now = new Date();
   let imgmetaext;
 
   let PostStatus="";
-
-  let qry1 = " SELECT * FROM `wp_posts` WHERE `ID` = '" + wppostID + "'"; 
-  db.query(qry1, (r1, res1) => {  
-  if (r1) {  return res.status(500).json({ message: 'errr5', status :500, msg:r1 });   }
-  if (res1.length > 0) {   
-    PostStatus=res1[0].comment_status
-  let usernameQuery = "SELECT * FROM `wp_comments` WHERE `comment_post_ID` = '" + wppostID + "' order by comment_ID desc";   
-  db.query(usernameQuery, (err1, result) => {        
+ 
+  let usernameQuery = "SELECT * FROM `wp_comments` a join wp_posts b on b.ID=a.comment_ID  WHERE a.`comment_post_ID` = '" + wppostID + "' order by comment_ID ASC limit 1";   
+  db.query(usernameQuery, (err1, result) => {          
       if (err1)   {  return res.status(500).json({ message: 'errr5', status :500, msg:err1 });     }
       if (result.length > 0) { 
+        PostStatus=result[0].comment_status
         let incrementval = 0; 
-      for (var i = 0; i < result.length; i++){    
+        let i=0;     
         var datecurrent = dateFormat(result[i].comment_date, "dd mmm yyyy");
         if(result[i].comment_img != null) { 
           imgmetavalue=result[i].comment_img;    
           imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1];
           let fileext=imgmetatitle.split('.')[1];
           imgmetaext="."+fileext;   
-         }  
+         } 
         third_array.push(result[i].comment_ID);
                  second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"), wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:imgmetavalue,datecurrent:datecurrent,comment_hour:result[i].comment_hour });     
-/*
-                 let usernameQuery301 = "SELECT * FROM `wp_commentmeta` where comment_id='" +result[i].comment_ID + "'";  
-                   console.log("usernameQuery301==",usernameQuery301)
-                 db.query(usernameQuery301, (err301, result301) => {
-                 if(err301) {  return res.status(500).json({ message: 'errr', status :500, wpstatus:0 });  } 
-              if(result301.length > 0){ 
-                 imgmetavalue=result301[0].meta_value; 
-                 let commentID=result301[0].comment_id
-                 imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1]; 
-                let fileext=imgmetatitle.split('.')[1];
-                console.log("fileext==",fileext);  
-                var finalindex="";
-                finalindex= third_array.indexOf(commentID);  
-                second_array[finalindex].wpurl=imgmetavalue;
-                 second_array[finalindex].wptitle=imgmetatitle;
-                 second_array[finalindex].wpextension="."+fileext; 
-                 finalindex=""; 
-            }
-                 incrementval++
-         console.log("incrementval=="+incrementval+"=="+i);     
-     if(incrementval==i) {  
-       return res.status(200).json({ status :200, wpstatus:1 , final_array:second_array,PostStatus:PostStatus });  
-     }
-         });    // commentmeta table end here...
-*/
-          //console.log("second_array==",second_array);
-         // forth_array=   second_array  
-          //console.log("forth_array==",forth_array.length); 
-          //second_array=[];
-             // setTimeout(() =>{
-                //final_array.push({ modifydate:datemodify, second_array:forth_array });   
-                //if(second_array.length ==i){         
-                //  return res.status(200).json({ status :200, final_array:second_array });  
-               // }     
-             // },1000);  
-         incrementval++
-         console.log("incrementval=="+incrementval+"=="+i+"=="+second_array.length+"=="+result.length);     
-     if(second_array.length==result.length) {      
-       return res.status(200).json({ status :200, wpstatus:1 , final_array:second_array,PostStatus:PostStatus });  
-     }   
-       }     
+                 return res.status(200).json({ status :200, wpstatus:1 , final_array:second_array,PostStatus:PostStatus }); 
       } 
       else {     return res.status(200).json({  message: 'No record found', status :200  });  }
 });
-}
-else {  return res.status(500).json({ message: 'No record found.', status :200, wpstatus:0 });   }  
-});  
 },
-
-
-
-
+ 
 
 taskfeedback:(req, res) =>   { 
 
@@ -906,7 +860,7 @@ taskfeedback:(req, res) =>   {
                 return res.status(500).json({ message: 'errr5', status :500, msg:err,wpstatus:0 });
                }     
                let qry2 = "UPDATE `wp_posts` set comment_status= 'closed' where ID= '" + postid + "'";  
-               db.query(qry2, (er2, result2) => {            
+               db.query(qry2, (er2, result2) => {              
                   if (er2) {
                     return res.status(500).json({ message: 'errr5', status :500, msg:er2,wpstatus:0 });
                   }          

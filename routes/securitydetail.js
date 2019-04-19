@@ -10,30 +10,31 @@ const randunique = uniqueRandom(10000000000, 99999999999);
 module.exports = { 
 
       
-    getloginwp:(req, res) => {
-      console.log("login api ..."); 
-         let emailid = req.body.emailid;  
-         let password = req.body.password;         
-         var encrytpass = encrydecry.sha1algo(req.body.password);   
-         //console.log("encrytpass==",encrytpass)     
-         let usernameQuery = "SELECT * FROM `wp_users` WHERE user_email = '" + emailid + "' and user_pass= '" + encrytpass + "' and ID !='1'";    
-         console.log("usernameQuery ==", usernameQuery)       
-         db.query(usernameQuery, (err, result) => { 
-             //console.log("statusCode==",res.statusCode)        
-             if (err) {
-                // return res.status(500).send(err); 
-                return res.status(500).json({ message: 'errr5', status :500, msg:err, wpstatus:-1  });
-             }
-             if (result.length > 0) {  
-                // console.log("result==",result)   
-                 return res.status(200).json({ status :200, getdata:result , wpstatus:1  });   
-                 //res.render('add-player.ejs', { message, title: "Welcome to Socka | Add a new player" }); 
-             } 
-             else {  
-                return res.status(200).json({  message: 'Invalid email and passord', status :200, wpstatus:0  }); 
-         }
-         });
-     },
+   
+  getloginwp:(req, res) => { 
+       let emailid = req.body.emailid;  
+       let password = req.body.password;         
+       var encrytpass = encrydecry.sha1algo(req.body.password);      
+       let usernameQuery = "SELECT * FROM `wp_users` WHERE user_email = '" + emailid + "' and user_pass= '" + encrytpass + "' and ID !='1'";         
+       db.query(usernameQuery, (err, result) => {      
+           if (err) {
+              return res.status(500).json({ message: 'errr5', status :500, msg:err, wpstatus:-1  });
+           }   
+    if (result.length > 0) {  
+      let Query1 = "SELECT * FROM `wp_posts` WHERE `post_author` = '" + result[0].ID + "'";         
+      db.query(Query1, (err1, result1) => {  
+      if (err1) {
+        return res.status(500).json({ message: 'errr5', status :500, msg:err1, wpstatus:-1  });
+      }
+        return res.status(200).json({ status :200, getdata:result , wpstatus:1,postlen:result1.length  });   
+      });		    
+    } 
+          else {    
+              return res.status(200).json({  message: 'Invalid email and passord', status :200, wpstatus:0  }); 
+          }
+  });
+}, 
+
 
      getresetwp:(req, res) => {
 
@@ -50,7 +51,9 @@ module.exports = {
           if (err) {
              return res.status(500).json({ message: 'errr5', status :500, msg:err });
           }
-          if (result.length > 0) {   
+          if (result.length > 0) {
+            
+            
         var transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: { 
@@ -78,7 +81,12 @@ module.exports = {
           } else { 
             return res.status(200).json({ status :200, message:'Mail Sent Successfully',wpstatus:1  }); 
           }
-        });    
+        });
+        
+        
+
+
+
           } 
           else {    
              return res.status(200).json({  message: 'Invalid email', status :200,wpstatus:0  }); 
@@ -338,7 +346,13 @@ paymentwp:(req, res) => {
   let TotalHours=req.body.TotalHours;
   let OrderAmt=req.body.OrderAmt;    
   let PaypalTxnID=req.body.PaypalTxnID;
-  let PaidDate1=req.body.PaidDate;    
+  let PaidDate1=req.body.PaidDate; 
+
+  let fullname=req.body.fullname;   // Billing Email ID  
+  let mobno=req.body.mobno;
+  let emailid=req.body.emailid; 
+
+  let UserEmailID="";
 
   var now = new Date();
   var timestamp=now.getTime();
@@ -358,6 +372,7 @@ paymentwp:(req, res) => {
      db.query(usernameQuery, (err, result) => {      
          if (err) {  return res.status(500).json({ message: 'errr5', status :500, msg:err, wpstatus:-1  });  }
          if (result.length > 0) { 
+          UserEmailID=result[0].user_email;    
           let Query1 = "INSERT INTO `wp_posts` (`post_author`, `post_date`, `post_date_gmt`, `post_content`, `post_title`, `post_excerpt`,`post_status`, `comment_status`, `ping_status`,`post_password`, `post_name`, `to_ping`,`pinged`, `post_modified`, `post_modified_gmt`,`post_content_filtered`, `post_parent`, `guid`,`menu_order`, `post_type`, `post_mime_type`, `comment_count`) VALUES('1','" + datecurrent + "','" + datecurrent + "','','" + posttitle + "','','wc-processing','open','closed','','" + posttitle + "','"+PostName+"','','" + datecurrent + "','" + datecurrent + "','','0','','0','shop_order','','1' )";        
           db.query(Query1, (err1, result1) => {      
               if (err1)  {  return res.status(500).json({ message: 'errr5', status :500, msg:err1, wpstatus:-1  });  }
@@ -381,8 +396,7 @@ paymentwp:(req, res) => {
               db.query(Query6, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal4=",SetIDVal);  });    
 
              let invoiceSet ='a:18:{s:24:"display_shipping_address";s:0:"";s:13:"display_email";s:1:"1";s:13:"display_phone";s:1:"1";s:12:"display_date";s:12:"invoice_date";s:14:"display_number";s:14:"invoice_number";s:19:"attach_to_email_ids";a:8:{s:9:"new_order";s:1:"1";s:15:"cancelled_order";s:0:"";s:12:"failed_order";s:0:"";s:22:"customer_on_hold_order";s:0:"";s:25:"customer_processing_order";s:0:"";s:24:"customer_completed_order";s:1:"1";s:23:"customer_refunded_order";s:1:"1";s:16:"customer_invoice";s:1:"1";}s:7:"enabled";s:1:"1";s:13:"number_format";a:3:{s:6:"prefix";s:29:"[invoice_year][invoice_month]";s:6:"suffix";s:0:"";s:7:"padding";s:1:"5";}s:18:"my_account_buttons";s:9:"available";s:10:"paper_size";s:2:"a4";s:15:"font_subsetting";b:0;s:11:"header_logo";s:3:"561";s:9:"shop_name";a:1:{s:7:"default";s:25:"Loginworks Softwares Inc.";}s:12:"shop_address";a:1:{s:7:"default";s:63:"4870 Sadler Road, Suit 300 Office 319, Glen Allen, VA, US-23060";}s:6:"footer";a:1:{s:7:"default";s:0:"";}s:7:"extra_1";a:1:{s:7:"default";s:0:"";}s:7:"extra_2";a:1:{s:7:"default";s:0:"";}s:7:"extra_3";a:1:{s:7:"default";s:0:"";}}'
-
-			 
+  
   let query7 ="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_order_key',meta_value=''";
   db.query(query7, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });   
   let query8="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_customer_user',meta_value='"+userid+"'";
@@ -408,8 +422,8 @@ paymentwp:(req, res) => {
   let query18="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_paid_date',meta_value='"+PaidDate+"'";
   db.query(query18, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });  
   let query19="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_cart_hash',meta_value=''";
-  db.query(query19, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });   
-  let query20="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_first_name',meta_value=''";
+  db.query(query19, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });  
+  let query20="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_first_name',meta_value='"+fullname+"'";
   db.query(query20, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });   
   let query21="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_last_name',meta_value=''";
   db.query(query21, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });   
@@ -427,9 +441,9 @@ paymentwp:(req, res) => {
   db.query(query27, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });   
   let query28="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_country',meta_value=''";
   db.query(query28, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });   
-  let query29="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_email',meta_value=''";
+  let query29="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_email',meta_value='"+emailid+"'";
   db.query(query29, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });   
-  let query30="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_phone',meta_value=''";
+  let query30="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_billing_phone',meta_value='"+mobno+"'";
   db.query(query30, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });   
   let query31="INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_shipping_first_name',meta_value=''";
   db.query(query31, (errr,results) => { if(errr){ }  SetIDVal=SetIDVal+1;  console.log("SetIDVal=",SetIDVal);  });   
@@ -484,17 +498,39 @@ paymentwp:(req, res) => {
   let query56=" INSERT INTO `wp_postmeta` SET `post_id`='"+WpPostID+"',meta_key='_wcpdf_invoice_date',meta_value='"+timestamp+"'";
   db.query(query56, (errr,results) => { if(errr){ }  
   SetIDVal=SetIDVal+1;  
-  console.log("SetIDVal=",SetIDVal);  
-	return res.status(200).json({ status :200, message:"Payment received successfully." , wpstatus:1  });
+  console.log("SetIDVal=",SetIDVal);
+           
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: { 
+        user: 'nishant.loginworks@gmail.com',  
+        pass: 'ngarg2801$'
+       }
+});            
+  
+let emailcontent='<div style="z-index: 0;padding: 10px;"> <div> <div style="padding:8px"></div> </div><div> <div dir="ltr" style="background-color:#f7f7f7;margin:0;padding:70px 0 70px 0;width:100%;"> <table border="0" cellpadding="0" cellspacing="0" width="100%" style="height:100%;"><tbody><tr><td align="center" valign="top"> <div> </div> <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color:#ffffff;border:1px solid #dedede;"><tbody><tr><td align="center" valign="top"> <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color:#3c3c3c;color:#ffffff;border-bottom:0;font-weight:bold;line-height:100%;vertical-align:middle;font-family:Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;"><tbody><tr><td style="padding:36px 48px;"> <h1 style="color:#ffffff;font-family:Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;font-size:30px;font-weight:300;line-height:150%;margin:0;text-align:left;">Thank you for your payment</h1> </td> </tr></tbody></table></td> </tr><tr><td align="center" valign="top"> <table border="0" cellpadding="0" cellspacing="0" width="600"><tbody><tr><td valign="top" style="background-color:#ffffff;"> <table border="0" cellpadding="20" cellspacing="0" width="100%"><tbody><tr><td valign="top" style="padding:48px 48px 0;"> <div style="color:#333333;font-family:Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;font-size:14px;line-height:150%;text-align:left;"> <p style="margin:0 0 16px;">Hi test908,</p> <p style="margin:0 0 16px;">Congratulations!</p> <p style="margin:0 0 16px;">Your Payment has been confirmed</p> <p style="margin:0 0 16px;">Thank you for choosing Loginworks Power BI your order num (#'+WpPostID+') is being processed.:</p><p> Paypal Transaction ID '+PaypalTxnID+'</p> <p style="margin:0 0 16px;">Payment details</p> <p style="margin:0 0 16px;">Pay with paypal.</p> <h2 style="color:#3c3c3c;font-family:Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:0 0 18px;text-align:left;"> [Order #'+WpPostID+'] '+PaidDate1+'</h2> <div style="margin-bottom:40px;"> <table class="td" cellspacing="0" cellpadding="6" border="1" style="color:#333333;border:1px solid #e5e5e5;vertical-align:middle;width:100%;font-family:Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;"><thead><tr><th class="td" scope="col" style="color:#333333;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left;">Product</th> <th class="td" scope="col" style="color:#333333;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left;">Quantity</th> <th class="td" scope="col" style="color:#333333;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left;">Price</th> </tr></thead><tfoot><tr><th class="td" scope="row" colspan="2" style="color:#333333;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left;border-top-width:4px;">Payment method:</th> <td class="td" style="color:#333333;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left;border-top-width:4px;">Paypal</td> </tr><tr><th class="td" scope="row" colspan="2" style="color:#333333;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left;">Total:</th> <td class="td" style="color:#333333;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left;"><span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">$</span>'+OrderAmt+'</span></td> </tr></tfoot><tbody><tr class="order_item"><td class="td" style="color:#333333;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left;font-family:Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;"> '+OrderItem+' </td> <td class="td" style="color:#333333;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left;font-family:Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;"> 1 </td> <td class="td" style="color:#333333;border:1px solid #e5e5e5;vertical-align:middle;padding:12px;text-align:left;font-family:Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;"> <span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">$</span>'+OrderAmt+'</span> </td> </tr></tbody></table></div> <table cellspacing="0" cellpadding="0" border="0" style="width:100%;vertical-align:top;margin-bottom:40px;padding:0;"><tbody><tr><td valign="top" width="50%" style="padding:0;text-align:left;font-family:Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;border:0;"> <h2 style="color:#3c3c3c;font-family:Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:0 0 18px;text-align:left;">Billing address</h2> <address class="address" style="padding:12px 12px 0;color:#333333;border:1px solid #e5e5e5;"> '+fullname+' <br>'+mobno+' <p style="margin:0 0 16px;">'+emailid+'</p> </address> </td> </tr></tbody></table><p style="margin:0 0 16px;">Access your account by visiting: https://loginworks.net/portal/my-account/login</p> <p style="margin:0 0 16px;">Let our experts take it from here,</p> <p style="margin:0 0 16px;">Provide your preferred phone number on sales@ Loginworks.com and our consultant will get in touch with you.</p> <p style="margin:0 0 16px;">We will keep you posted with more tips and tricks.</p> <p style="margin:0 0 16px;"><b>Time to transform your Business</b></p> <p style="margin:0 0 16px;"><b>Team Loginworks https://loginworks.com</b></p> <p style="margin:0 0 16px;"><b> Thanks!</b></p> </div> </td> </tr></tbody></table></td> </tr></tbody></table></td> </tr><tr><td align="center" valign="top"> <table border="0" cellpadding="10" cellspacing="0" width="600"><tbody><tr><td valign="top" style="padding:0;"> <table border="0" cellpadding="10" cellspacing="0" width="100%"><tbody><tr><td colspan="2" valign="middle" style="padding:0 48px 48px 48px;border:0;color:#8a8a8a;font-family:Arial;font-size:12px;line-height:125%;text-align:center;"> <p>Loginworks Power BI Portal<br>Powered by <a href="https://www.loginworks.com/lp/power-bi-consulting-services.php" style="color:#3c3c3c;font-weight:normal;text-decoration:underline;" rel="nofollow">Loginworks Power BI Portal</a></p> </td> </tr></tbody></table></td> </tr></tbody></table></td> </tr></tbody></table></td> </tr></tbody></table></div></div></div>';
+ 
+var mailOptions = {
+    from: 'support@loginworks.com', 
+    to: UserEmailID,   
+    cc:emailid,
+    subject: 'Payment confirmation & a guide to Loginworks BI',
+    text: 'Loginworks Power BI Portal',
+    html: emailcontent
+  }; 
+  
+  transporter.sendMail(mailOptions, function(error, info){
+    if(error) { console.log("mail error ==",error);   }
+    else { 
+      return res.status(200).json({ status :200, message:"Payment received successfully." , wpstatus:1  });  
+    }
+  });
   });  		 
 console.log("SetIDVal==",SetIDVal); 
 if(SetIDVal == 55){  
 	return res.status(200).json({ status :200, message:"Payment received successfully." , wpstatus:1  });  
 }
-              
-
-            });  
-              
+});        
          } 
          else {  return res.status(200).json({  message: 'you are not authorized to use', status :200, wpstatus:0  }); }
      });
@@ -544,6 +580,11 @@ if(SetIDVal == 55){
           final_array.push({ ItemName:"5O HOURS",ItemPrice:"$1200",SaveAmt:"$300",ItemTime:"50 hours",status:"0",DItemName:"50 Hours Bucket",DBal:"50",DTotal:"50",DPrice:"300" });     
             return res.status(200).json({status :200,message:"Data received successfully.",wpstatus:1,getdata:result11});
           }
+
+
+
+
+
         });  
   }
       else {  
