@@ -642,12 +642,20 @@ let metaarrval;
 
 },
  
+
 taskoncomwp:(req, res) =>  { 
   var final_array= new Array();
-
+var fbbackstatus="";
+var fbfinalstatus;
     let userid=req.body.userid;
     let BackStatus=req.body.status;
-
+    console.log("",BackStatus)
+if(BackStatus == 'closed'){
+  fbbackstatus=1;
+}
+if(BackStatus == 'open'){
+  fbbackstatus=0;
+}
     var getdataval=false;
     // for  wp_user  variable
     let Usrauther;
@@ -674,7 +682,10 @@ taskoncomwp:(req, res) =>  {
             Usremail=result[0].user_email;
             Usrurl=result[0].user_url; 
 
-             let usernameQuery1 = " SELECT * FROM `wp_posts`  WHERE `post_author` = '" + userid + "' and post_type ='fast_ticket' and comment_status='"+BackStatus+"'";    
+
+  
+
+             let usernameQuery1 = "SELECT * FROM `wp_posts`  WHERE `post_author` = '" + userid + "' and post_type ='fast_ticket' and fb_review='"+fbbackstatus+"'";        
              console.log("usernameQuery1==",usernameQuery1)      
              db.query(usernameQuery1, (err1, result1) => {        
                  if (err1) {
@@ -683,17 +694,16 @@ taskoncomwp:(req, res) =>  {
                  if (result1.length > 0) {
                   let incrementval=0;  
                 for(var i=0;i<result1.length; i++){
- 
                 PostID=result1[i].ID;
-
                 PostDate=dateFormat(result1[i].post_date, "dddd, mmmm dS, yyyy, h:MM:ss TT");
-            
-                PostTitle=result1[i].post_title;   
-
-                final_array.push({ TermName:"", PostTitle:PostTitle,PostDate:PostDate,PostID:PostID,Usrauther:Usrauther,image:"",NewPost:NewPost,status:result1[i].comment_status,comment_hour:0 });  
-
-
-
+                PostTitle=result1[i].post_title;
+if(result1[i].post_title==0){
+  fbfinalstatus="open";
+}
+if(result1[i].post_title==1){
+  fbfinalstatus="closed";
+}    
+                final_array.push({ TermName:"", PostTitle:PostTitle,PostDate:PostDate,PostID:PostID,Usrauther:Usrauther,image:"",NewPost:NewPost,status:fbfinalstatus,comment_hour:0,reviewStatus:result1[i].comment_status });  
 /*
                 let usernameQuery2 = "SELECT * FROM `wp_term_relationships` WHERE `object_id`='"+result1[i].ID+"'";     
                   db.query(usernameQuery2, (err2, result2) => {
@@ -730,26 +740,23 @@ taskoncomwp:(req, res) =>  {
                 });
               }); 
 */
-
-
               incrementval++
               if(final_array.length ===result1.length) {      
                 return res.status(200).json({  message: "Data recevied successfully.", status :200, wpstatus:1,final_array:final_array });    
               }
-
-
-
-
             }  // end of for loop here ... 
-
-            
             }
-
             else {
               final_array=[]; 
               return res.status(200).json({  message: "Data recevied successfully.", status :200, wpstatus:1,final_array:final_array });  
             }
-        }); 
+        });
+        
+    
+
+
+
+
         } 
         else {      
         return res.status(200).json({  message: 'you are not authorized to use', status :200 , wpstatus:0 });  
@@ -858,7 +865,7 @@ taskfeedback:(req, res) =>   {
                if (err) {
                 return res.status(500).json({ message: 'errr5', status :500, msg:err,wpstatus:0 });
                }     
-               let qry2 = "UPDATE `wp_posts` set comment_status= 'closed' where ID= '" + postid + "'";  
+               let qry2 = "UPDATE `wp_posts` set fb_review= '1' where ID= '" + postid + "'";    
                db.query(qry2, (er2, result2) => {              
                   if (er2) {
                     return res.status(500).json({ message: 'errr5', status :500, msg:er2,wpstatus:0 });

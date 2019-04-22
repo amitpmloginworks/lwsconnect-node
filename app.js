@@ -140,7 +140,7 @@ app.post('/buyadditional',BuyAdditionalwp);
 
 app.post('/uponesignal',uponesignalwp); 
 
-app.post('/getnotify',getnotifywp); 
+app.post('/getnotify',getnotifywp);  
 
 // set the app to listen on the port
 app.listen(port, () => {   
