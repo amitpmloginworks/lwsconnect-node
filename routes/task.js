@@ -10,131 +10,126 @@ const randunique = uniqueRandom(10000000000, 99999999999);
 var Urllinks="http://ec2-13-58-246-109.us-east-2.compute.amazonaws.com:3555"; 
 module.exports = {  
  
-mytaskwp:(req, res) =>   { 
+
+  mytaskwp:(req, res) =>   { 
     
-var second_array= new Array();
-var third_array= new Array();
-var forth_array= new Array();
-var final_array= new Array();
-
-var now = new Date();
-
-  let wppostID = req.body.postid;
-  let userid=req.body.userid;
-
-  var datemodify="";
-  var datefirst;
-  var datedb;
-  let styleClassvar="";
-  let handsvar=""; 
-  
-  let imgmetavalue="";
-  let imgmetatitle="";
-  let imgmetaext="";
-
-  let Usrimgleft="";
-  let usridleft="";
-
-  let usernameQuery = " SELECT * FROM `wp_comments` WHERE `comment_post_ID` = '" + wppostID + "' group by DATE_FORMAT(comment_date,'%y-%m-%d')";   
-  db.query(usernameQuery, (err1, result1) => {        
-      if (err1) {
-         return res.status(500).json({ message: 'errr5', status :500, msg:err1 });
-      }
-      if (result1.length > 0) { 
-
-      for (var j = 0; j < result1.length; j++){ 
-           var datecurrent = dateFormat(result1[j].comment_date, "yyyy-mm-dd");
-
-         //let usernameQuery1 = "SELECT * FROM `wp_comments` WHERE `comment_post_ID` = '" + result1[j].comment_post_ID + "' and DATE(comment_date) =DATE('"+datecurrent+"')";  
-
-         let usernameQuery1 = "SELECT * FROM `wp_comments` a join wp_usermeta b on a.user_id=b.user_id WHERE a.`comment_post_ID` = '" + result1[j].comment_post_ID + "' and DATE(a.comment_date) =DATE('"+datecurrent+"')  and b.meta_key='_attachments' group by a.comment_ID"
-
-         console.log(usernameQuery1)  
-         db.query(usernameQuery1, (err, result) => {        
-             if (err) {
-                return res.status(500).json({ message: 'errr5', status :500, msg:err });
-             }  
-             let incrementval=0;
-             second_array=[];     
-          for (var i = 0; i < result.length; i++){
-                datefirst= dateFormat(now, "mm/dd/yyyy");
-                datedb=dateFormat(result[i].comment_date, "mm/dd/yyyy");
-              if(datefirst==datedb){  
-               datemodify="Today";
-              }
-              else {
-               datemodify=dateFormat(result[i].comment_date, "fullDate");
-              } 
-              if(result[i].user_id==userid){
-                styleClassvar="chat-message right";
-                handsvar=1;
-              }
-              else{
-                usridleft=result[i].user_id;
-              
-                styleClassvar="chat-message left";
-                handsvar=2;      
-              } 
-             
-              if(result[i].comment_img != null) { 
-                imgmetavalue=result[i].comment_img;    
-                imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1];
-                let fileext=imgmetatitle.split('.')[1];
-                imgmetaext="."+fileext;   
-               }       
-         
-               Usrimgleft=result[i].meta_value;    
-
-               second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"),styleClass:styleClassvar,hands:handsvar, wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:imgmetavalue,Usrimgleft:Usrimgleft });       
-
-               imgmetavalue="";  
-               imgmetatitle=""; 
-               imgmetaext=""; 
-               Usrimgleft="";
-
-/*
-        let usernameQuery301="SELECT * FROM `wp_commentmeta` where comment_id='" +result[i].comment_ID + "'";  
-            db.query(usernameQuery301, (err301, result301) => {
-                 if (err301) {  return res.status(500).json({ message: 'errr', status :500, wpstatus:0 }); } 
-              if(result301.length > 0){ 
-                 imgmetavalue=result301[0].meta_value; 
-                 let commentID=result301[0].comment_id
-                 Usrimgleft= result301[0].usrmeta_value;      
-                 imgmetatitle=imgmetavalue.split('http://182.156.204.228:3555/assets/img/')[1]; 
-                let fileext=imgmetatitle.split('.')[1];
-                var finalindex="";
-                finalindex= third_array.indexOf(commentID);  
-                  second_array[finalindex].wpurl=imgmetavalue;   
-                 second_array[finalindex].wptitle=imgmetatitle;
-                 second_array[finalindex].wpextension="."+fileext; 
-                 console.log("second_array==",second_array)    
-                 finalindex="";   
-                }
-            });    
-*/  
-          
-        incrementval++       
-          }  // for loop   of table wp_commentmeta  
-
-          if(result.length===incrementval){
-            final_array.push({ modifydate:datemodify, second_array:second_array }); 
+    var second_array= new Array();
+    var third_array= new Array();
+    var forth_array= new Array();
+    var final_array= new Array();
+    
+    var now = new Date();
+    
+      let wppostID = req.body.postid;
+      let userid=req.body.userid;
+    
+      var datemodify="";
+      var datefirst;
+      var datedb;
+      let styleClassvar="";
+      let handsvar=""; 
+      
+      let imgmetavalue="";
+      let imgmetatitle="";
+      let imgmetaext="";
+    
+      let Usrimgleft="";
+      let usridleft="";
+    
+      let usernameQuery = " SELECT * FROM `wp_comments` WHERE `comment_post_ID` = '" + wppostID + "' group by DATE_FORMAT(comment_date,'%y-%m-%d')";   
+      db.query(usernameQuery, (err1, result1) => {        
+          if (err1) {
+             return res.status(500).json({ message: 'errr5', status :500, msg:err1 });
           }
-          
-          if(final_array.length ==j){      
-              return res.status(200).json({ status :200, final_array:final_array });   
-          }     
-         });  
-       }     
-      } 
-      else {      
-         return res.status(200).json({  message: 'No record found', status :200  }); 
-  }
-});
-},
-
+          if (result1.length > 0) { 
+          for (var j = 0; j < result1.length; j++){ 
+               var datecurrent = dateFormat(result1[j].comment_date, "yyyy-mm-dd");
+             //let usernameQuery1 = "SELECT * FROM `wp_comments` WHERE `comment_post_ID` = '" + result1[j].comment_post_ID + "' and DATE(comment_date) =DATE('"+datecurrent+"')";  
+             let usernameQuery1 = "SELECT * FROM `wp_comments` a join wp_usermeta b on a.user_id=b.user_id WHERE a.`comment_post_ID` = '" + result1[j].comment_post_ID + "' and DATE(a.comment_date) =DATE('"+datecurrent+"')  and b.meta_key='_attachments' group by a.comment_ID"
+             db.query(usernameQuery1, (err, result) => {        
+                 if (err) {
+                    return res.status(500).json({ message: 'errr5', status :500, msg:err });
+                 }  
+                 let incrementval=0;
+                 second_array=[];     
+              for (var i = 0; i < result.length; i++){
+                    datefirst= dateFormat(now, "mm/dd/yyyy");
+                    datedb=dateFormat(result[i].comment_date, "mm/dd/yyyy");
+                  if(datefirst==datedb){  
+                   datemodify="Today";
+                  }
+                  else {
+                   datemodify=dateFormat(result[i].comment_date, "fullDate");
+                  } 
+                  if(result[i].user_id==userid){
+                    styleClassvar="chat-message right";
+                    handsvar=1;
+                  }
+                  else{
+                    usridleft=result[i].user_id;
+                  
+                    styleClassvar="chat-message left";
+                    handsvar=2;      
+                  } 
+                 
+                  if(result[i].comment_img != null) { 
+                    imgmetavalue=result[i].comment_img;    
+                    imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1];
+                    let fileext=imgmetatitle.split('.')[1];
+                    imgmetaext="."+fileext;   
+                   }       
+             
+                   Usrimgleft=result[i].meta_value;    
+    
+                   second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"),styleClass:styleClassvar,hands:handsvar, wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:imgmetavalue,Usrimgleft:Usrimgleft });       
+    
+                   imgmetavalue="";  
+                   imgmetatitle=""; 
+                   imgmetaext=""; 
+                   Usrimgleft="";
+    
+    /*
+            let usernameQuery301="SELECT * FROM `wp_commentmeta` where comment_id='" +result[i].comment_ID + "'";  
+                db.query(usernameQuery301, (err301, result301) => {
+                     if (err301) {  return res.status(500).json({ message: 'errr', status :500, wpstatus:0 }); } 
+                  if(result301.length > 0){ 
+                     imgmetavalue=result301[0].meta_value; 
+                     let commentID=result301[0].comment_id
+                     Usrimgleft= result301[0].usrmeta_value;      
+                     imgmetatitle=imgmetavalue.split('http://182.156.204.228:3555/assets/img/')[1]; 
+                    let fileext=imgmetatitle.split('.')[1];
+                    var finalindex="";
+                    finalindex= third_array.indexOf(commentID);  
+                      second_array[finalindex].wpurl=imgmetavalue;   
+                     second_array[finalindex].wptitle=imgmetatitle;
+                     second_array[finalindex].wpextension="."+fileext; 
+                     console.log("second_array==",second_array)    
+                     finalindex="";   
+                    }
+                });    
+    */   
+            incrementval++       
+              }  // for loop   of table wp_commentmeta  
+    
+              if(result.length===incrementval){
+                final_array.push({ modifydate:datemodify, second_array:second_array }); 
+              }
+              
+              if(final_array.length ==j){      
+                  return res.status(200).json({ status :200, final_array:final_array });   
+              }     
+             });  
+           }     
+          } 
+          else {      
+             return res.status(200).json({  message: 'No record found', status :200  }); 
+      }
+    });
+    },
+    
 secondFunArr : function (finalarr){
   return finalarr;
-},
+},    
 
 mytaskreplywp:(req, res) =>   { 
 
@@ -147,7 +142,6 @@ mytaskreplywp:(req, res) =>   {
   let Usremail;
   let Usrurl;
   let datecurrent
-
 
     let usernameQuery = " SELECT * FROM `wp_users` WHERE `ID` = '" + userid + "'"; 
     db.query(usernameQuery, (err, result) => {        
@@ -163,7 +157,15 @@ mytaskreplywp:(req, res) =>   {
                if (err1) {
                   return res.status(500).json({ message: 'errr5', status :500, msg:err1, wpstatus:0 });
                }
-               if (result1.length > 0) {  
+               if (result1.length > 0) { 
+                //let Query2="update `wp_comments` set read_comment='1'  ORDER BY comment_ID DESC LIMIT 1"; 
+                let Query2="update `wp_comments` set read_comment='1' where `comment_post_ID` = '" + wppostID + "' and user_id='1'";  
+                db.query(Query2,(err33,result33) =>{ 
+                  if (err33) { 
+                    return res.status(500).json({ message: 'errr', status :500, wpstatus:0 }); 
+                  } 
+                });
+
                 var now = new Date();
                 datecurrent = dateFormat(now, "yyyy-mm-dd HH:MM:ss"); 
                 let usernameQuery2 = "UPDATE `wp_posts` SET `post_date`='" + datecurrent + "', `post_date_gmt`='" + datecurrent + "', `post_content`=concat('"+postcontent+"',ifnull(post_content,'')), `comment_count`=comment_count+1 WHERE ID='" +
@@ -175,9 +177,6 @@ mytaskreplywp:(req, res) =>   {
                 var strIP = localStorage.getItem('ipInfo');   
                 var strIPClient = JSON.parse(strIP).clientIp; 
 
-              let Query2="update `wp_comments` set read_comment='1' ORDER BY comment_ID DESC LIMIT 1"; 
-              db.query(Query2,(err33,result33) =>{ if (err33) { return res.status(500).json({ message: 'errr', status :500, wpstatus:0 }); } });
-   
                 let usernameQuery3 = "INSERT INTO `wp_comments` ( `comment_post_ID`, `comment_author`, `comment_author_email`, `comment_author_url`, `comment_author_IP`, `comment_date`, `comment_date_gmt`, `comment_content`, `comment_karma`, `comment_approved`, `comment_agent`, `comment_type`, `comment_parent`, `user_id`) VALUES ('" +
                 wppostID + "', '" + Usrauther + "', '" + Usremail + "', '" + Usrurl + "', '" + strIPClient + "', '" + datecurrent + "', '" + datecurrent + "','"+ postcontent + "', '0', '1', '', '', '0', '" + userid + "')";    
                 db.query(usernameQuery3, (err3, result3) => {

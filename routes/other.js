@@ -61,6 +61,47 @@ notificationwp:(req, resf) => {
 }, 
 
 
+notificationIDwp:(req, resf) => {  
+
+  var message = { 
+    app_id: "88c090db-e908-4c22-857c-ba9025a471a8",
+    contents: {"en": "English Message"},
+    include_player_ids: ["2bbcdf76-bfe1-4d12-8f3e-8184677320b2","cb41c877-238a-4a9f-995d-6ba312862eec"]
+  };
+
+    var headers = {
+      "Content-Type": "application/json; charset=utf-8"
+    };
+    
+    var options = {
+      host: "onesignal.com",
+      port: 443,
+      path: "/api/v1/notifications",
+      method: "POST",
+      headers: headers
+    };
+    
+    var https = require('https');
+    var req = https.request(options, function(res) {  
+      res.on('data', function(data) {
+        return resf.status(200).json({ status :200, wpstatus:1,message :JSON.parse(data)  });
+        console.log("Response:");
+        console.log(JSON.parse(data));
+      });
+    });
+    
+    req.on('error', function(e) {
+      return resf.status(200).json({ status :500, wpstatus:0,message :e  });  
+      console.log("ERROR:");
+      console.log(e);
+    });
+    
+    req.write(JSON.stringify(data));
+    req.end();
+}, 
+
+
+
 
 
 };

@@ -7,6 +7,8 @@ var localStorage = require('localStorage')
 const uniqueRandom = require('unique-random');
 const randunique = uniqueRandom(10000000000, 99999999999);
 
+var Urllinks="http://ec2-13-58-246-109.us-east-2.compute.amazonaws.com:3555"; 
+
 module.exports = { 
 
       
@@ -20,7 +22,19 @@ module.exports = {
            if (err) {
               return res.status(500).json({ message: 'errr5', status :500, msg:err, wpstatus:-1  });
            }   
-    if (result.length > 0) {  
+    if (result.length > 0) {
+      
+      let Query4 = "SELECT * FROM `wp_usermeta` WHERE `user_id` = '" + result[0].ID + "' and meta_key='_attachments'";         
+      db.query(Query4, (err4, result4) => {   
+        if (err4) {  return res.status(500).json({ message: 'errr5', status :500, msg:err4, wpstatus:-1  });    }
+        if (result4.length == 0) { 
+        let Query5 = "insert into `wp_usermeta` set `user_id` = '" + result[0].ID + "', meta_key='_attachments', meta_value=''";         
+        db.query(Query5, (err4, result4) => {  });  
+        }  
+        else {   } 
+      });	
+
+      
       let Query1 = "SELECT * FROM `wp_posts` WHERE `post_author` = '" + result[0].ID + "'";         
       db.query(Query1, (err1, result1) => {  
       if (err1) {
@@ -197,31 +211,81 @@ module.exports = {
     });
 },
 
+
+uponesignalwp:(req, res) => {            
+
+  let userid = req.body.userid;  
+  let playerID = req.body.playerID;  
+
+  let usernameQuery = "SELECT * FROM `wp_users` WHERE ID = '" + userid + "'";          
+  db.query(usernameQuery, (err, result) => {       
+      if (err) {  return res.status(500).json({ message: 'errr5', status :500, msg:err, wpstatus:-1  });   }
+      if (result.length > 0) {
+        let Qry1 = "UPDATE `wp_users` set usr_segmentid='"+playerID+"' WHERE ID = '" + userid + "'";           
+        db.query(Qry1, (err1, result1) => {   
+          if (err1) {  return res.status(500).json({ message: 'errr5', status :500, msg:err1, wpstatus:-1  });   }
+          if (result1.length > 0) {
+            console.log("result1==",result1); 
+            return res.status(200).json({ status :200, message:"Profile updated successfully." , wpstatus:1, getdata:result1  }); 
+         }
+        }); 
+      } 
+      else {  
+         return res.status(200).json({  message: 'you are not authorized to use', status :200, wpstatus:0  }); 
+  }  
+  });
+},
+
+
+getnotifywp:(req, res) => {               
+  let userid = req.body.userid;  
+  let playerID = req.body.playerID; 
+  let usernameQuery = "SELECT * FROM `wp_users` WHERE ID = '" + userid + "'";          
+  db.query(usernameQuery, (err, result) => {       
+      if (err) {  return res.status(500).json({ message: 'errr5', status :500, msg:err, wpstatus:-1  });   }
+      if (result.length > 0) {
+        let Qry1 = "select * from  `wp_notification` WHERE notify_user_id = '" + userid + "'";          
+        db.query(Qry1, (err1, result1) => {   
+          if (err1) {  return res.status(500).json({ message: 'errr5', status :500, msg:err1, wpstatus:-1  });   }
+          if (result1.length > 0) {
+            console.log("result1==",result1); 
+            return res.status(200).json({ status :200, message:"Data recevied successfully." , wpstatus:1, getdata:result1  });    
+         }
+        }); 
+      } 
+      else {     
+         return res.status(200).json({  message: 'you are not authorized to use', status :200, wpstatus:0  }); 
+  }  
+  });
+},
+
 upprofileimgwp:(req, res) => {      
   let userid = req.body.userid;  
   let profileimg ="";
-  let usernameQuery = "SELECT * FROM `wp_users` WHERE ID = '" + userid + "'";          
+  let usernameQuery = "SELECT * FROM `wp_users` WHERE ID = '" + userid + "'";   
+  console.log("usernameQuery",usernameQuery);         
   db.query(usernameQuery, (err, result) => {       
       if (err) {  return res.status(500).json({ message: 'errr5', status :500, msg:err, wpstatus:-1  });   }
       if (result.length > 0) {
   let uploadedFile = req.files.file;
   let fileName = uploadedFile.name;   
   let fileExtension = uploadedFile.mimetype.split('/')[1]; 
-  console.log("fileExtension==",fileExtension) 
+  console.log("fileExtension==",fileExtension);   
   uploadedFile.mv(`public/assets/img/${fileName}`, (err ) => {    
     if (err) {  return res.status(500).json({ message: 'errr5',status :500,msg:err,wpstatus:0 });  }
+    profileimg=Urllinks+"/public/assets/img/"+fileName;   
         let Qry11 = "SELECT * from `wp_usermeta` where meta_key='_attachments' and user_id = '" + userid + "'";         
         db.query(Qry11, (err11, result11) => {   
           if (result11.length > 0) {
-            let Qry12 = "UPDATE `wp_usermeta` SET meta_value='"+profileimg+"'  WHERE user_id = '" + userid + "' and meta_key='_attachments'";         
+            let Qry12 = "UPDATE `wp_usermeta` SET meta_value='"+profileimg+"'  WHERE user_id = '" + userid + "' and meta_key='_attachments'";     
             db.query(Qry12, () => {   });
           }
-          else {    
-            let Qry13 = "INSERT INTO `wp_usermeta` SET meta_value='"+profileimg+"', user_id = '" + userid + "', meta_key='_attachments'";         
-            db.query(Qry13, () => {   });
-          }
+          // else {       
+          //   let Qry13 = "INSERT INTO `wp_usermeta` SET meta_value='"+profileimg+"', user_id = '" + userid + "', meta_key='_attachments'"; 
+          //   db.query(Qry13, () => {   });
+          // }
         });
-      return res.status(200).json({status :200,message:"Profile updated successfully.",wpstatus:1,getdata:result1}); 
+      return res.status(200).json({status :200,message:"Profile updated successfully.",wpstatus:1,image:profileimg });   
     }); 
   }
       else {  
