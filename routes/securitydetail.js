@@ -242,8 +242,8 @@ getnotifywp:(req, res) => {
   let usernameQuery = "SELECT * FROM `wp_users` WHERE ID = '" + userid + "'";          
   db.query(usernameQuery, (err, result) => {       
       if (err) {  return res.status(500).json({ message: 'errr5', status :500, msg:err, wpstatus:-1  });   }
-      if (result.length > 0) {
-        let Qry1 = "select * from  `wp_notification` WHERE notify_user_id = '" + userid + "'";          
+      if (result.length > 0) {  
+        let Qry1 = "select * from  `wp_notification` WHERE notify_user_id = '" + userid + "' order by  notify_id DESC";          
         db.query(Qry1, (err1, result1) => {   
           if (err1) {  return res.status(500).json({ message: 'errr5', status :500, msg:err1, wpstatus:-1  });   }
           if (result1.length > 0) {

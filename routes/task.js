@@ -550,6 +550,7 @@ let metaarrval;
 
          let usernameQuery1 = "INSERT INTO `wp_posts` (`post_author`, `post_date`, `post_date_gmt`, `post_content`, `post_title`, `post_excerpt`,`post_status`, `comment_status`, `ping_status`,`post_password`, `post_name`, `to_ping`,`pinged`, `post_modified`, `post_modified_gmt`,`post_content_filtered`, `post_parent`, `guid`,`menu_order`, `post_type`, `post_mime_type`, `comment_count`) VALUES('" + userid + "','" + datecurrent + "','" + datecurrent + "','" + postcontent + "','" + posttitle + "','','publish','open','closed','','" + posttitle + "','','','" + datecurrent + "','" + datecurrent + "','','0','','0','fast_ticket','','1' )";  
 
+         console.log("usernameQuery1==",usernameQuery1)  
          db.query(usernameQuery1, (err1, result1) => {        
              if (err1) {
                 return res.status(500).json({ message: 'errr3', status :500, msg:err1, wpstatus:0 });
