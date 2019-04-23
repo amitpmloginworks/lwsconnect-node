@@ -310,10 +310,10 @@ mytasklistwp:(req, res) =>   {
       let usernameQuery1 = " SELECT * FROM `wp_posts` a  join wp_term_relationships b  on a.ID = b.object_id WHERE a.post_author ='" + userid + "'";   
 
       if(postname !=""){
-         usernameQuery1 += "and `post_title` like '%" + postname + "%' or `post_content` like '%" + postname + "%'"; 
+         usernameQuery1 += "and (`post_title` like '%" + postname + "%' or `post_content` like '%" + postname + "%')"; 
       }
       if(statuswp !=""){
-        usernameQuery1 += "and comment_status='"+statuswp+"'";  
+        usernameQuery1 += "and comment_status='"+statuswp+"'";   
      }
      if(categorywp !=""){
       usernameQuery1 += "and b.term_taxonomy_id='"+categorywp+"'"; 
@@ -431,6 +431,7 @@ mytasklistwp:(req, res) =>   {
       let userid=req.body.userid; 
       let TotalPost=0;  
       let NewPost=0; 
+      let NewNotify=0; 
       let usernameQuery1 = " SELECT ID FROM `wp_posts` WHERE `post_author` = '"+userid+"' and post_status='publish'"; 
 
       db.query(usernameQuery1, (err, result) => {  if (err) {   }  TotalPost= result.length;    }); 
@@ -438,8 +439,11 @@ mytasklistwp:(req, res) =>   {
         let usernameQuery = " SELECT a.ID FROM `wp_posts` a join wp_comments b on a.ID=b.comment_post_ID WHERE a.`post_author` = '"+userid+"' and b.user_id !='"+userid+"' and a.post_content !='' and b.read_comment='0'"; 
         db.query(usernameQuery, (err1, result1) => {   if (err1) {  }   NewPost = result1.length;  }); 
 
+        let Query2 = " SELECT * FROM `wp_notification` WHERE `notify_user_id` = '"+userid+"' and notify_read='0'"; 
+        db.query(Query2, (err2, result2) => {   if (err2) {  }   NewNotify = result2.length;  });    
+
   setTimeout(() =>{  
-    return res.status(200).json({ status :200, newpost:NewPost,TotalPost:TotalPost,wpstatus:1 });
+    return res.status(200).json({ status :200, newpost:NewPost,TotalPost:TotalPost,wpstatus:1,NewNotify:NewNotify });
   }, 2000); 
   }, 
 
