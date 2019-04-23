@@ -673,7 +673,8 @@ if(BackStatus == 'open'){
     let TermName;
     let PostDate;
     let PostTitle;  
-
+let slug;
+  
     let NewPost=0;
  
       let usernameQuery = "SELECT * FROM `wp_users` WHERE `ID` = '" + userid + "'";  
@@ -704,13 +705,31 @@ if(BackStatus == 'open'){
                 PostID=result1[i].ID;
                 PostDate=dateFormat(result1[i].post_date, "dddd, mmmm dS, yyyy, h:MM:ss TT");
                 PostTitle=result1[i].post_title;
+                slug=result1[i].slug
 if(result1[i].fb_review==0){
   fbfinalstatus="open";
 }
 if(result1[i].fb_review==1){
   fbfinalstatus="closed"; 
 }    
-                final_array.push({ TermName:"", PostTitle:PostTitle,PostDate:PostDate,PostID:PostID,Usrauther:Usrauther,image:"",NewPost:NewPost,status:fbfinalstatus,comment_hour:0,reviewStatus:result1[i].slug });  
+
+ 
+// let Query1 = "SELECT * FROM `hours_spent`  WHERE hs_postid = '" + PostID + "'";       
+// console.log("Query1==",Query1);  
+// db.query(Query1, (err11, result111) => {          
+//     if (err11)   {  return res.status(500).json({ message: 'errr5', status :500, msg:err11 });     }
+//     console.log("result111==",result111) 
+//     if(result111.length > 0){
+//       final_array.push({ TermName:"", PostTitle:PostTitle,PostDate:PostDate,PostID:PostID,Usrauther:Usrauther,image:"",NewPost:NewPost,status:fbfinalstatus,comment_hour:result111[0].hour_spent,reviewStatus:slug });  
+//     }  
+//     else {
+         
+      final_array.push({ TermName:"", PostTitle:PostTitle,PostDate:PostDate,PostID:PostID,Usrauther:Usrauther,image:"",NewPost:NewPost,status:fbfinalstatus,comment_hour:0,reviewStatus:slug });    
+//     }          
+// });
+
+
+               
 /*
                 let usernameQuery2 = "SELECT * FROM `wp_term_relationships` WHERE `object_id`='"+result1[i].ID+"'";     
                   db.query(usernameQuery2, (err2, result2) => {
@@ -818,6 +837,7 @@ TaskApproveDis:(req, res) => {
 var second_array= new Array();
 var third_array= new Array();
  
+var third_array1 = new Array();
 var now = new Date();
 
   let wppostID = req.body.postid;
@@ -829,6 +849,7 @@ var now = new Date();
 
   let PostStatus="";
  
+
   let usernameQuery = "SELECT * FROM `wp_comments` a join wp_posts b on b.ID=a.comment_ID  WHERE a.`comment_post_ID` = '" + wppostID + "' order by comment_ID ASC limit 1";   
   db.query(usernameQuery, (err1, result) => {          
       if (err1)   {  return res.status(500).json({ message: 'errr5', status :500, msg:err1 });     }
@@ -844,8 +865,17 @@ var now = new Date();
           imgmetaext="."+fileext;   
          } 
         third_array.push(result[i].comment_ID);
-                 second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"), wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:imgmetavalue,datecurrent:datecurrent,comment_hour:result[i].comment_hour });     
-                 return res.status(200).json({ status :200, wpstatus:1 , final_array:second_array,PostStatus:PostStatus }); 
+                 second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"), wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:imgmetavalue,datecurrent:datecurrent,comment_hour:result[i].comment_hour });  
+    
+                 let Query1 = "SELECT * FROM `hours_spent`  WHERE hs_postid = '" + wppostID + "' order by hs_id DESC";     
+                 console.log("Query1==",Query1);  
+                 db.query(Query1, (err11, result111) => {          
+                     if (err11)   {  return res.status(500).json({ message: 'errr5', status :500, msg:err11 });     }
+                     console.log("result111==",result111) 
+                     return res.status(200).json({ status :200, wpstatus:1 , final_array:second_array,PostStatus:PostStatus,final_hours:result111 });         
+                });
+
+              
       } 
       else {     return res.status(200).json({  message: 'No record found', status :200  });  }
 });
