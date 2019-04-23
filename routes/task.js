@@ -681,11 +681,13 @@ if(BackStatus == 'open'){
             Usrauther=result[0].user_nicename;
             Usremail=result[0].user_email;
             Usrurl=result[0].user_url; 
+             
+  // SELECT * FROM `wp_posts` a inner join `wp_term_relationships` b on a.ID=b.object_id  inner join wp_terms c on b.term_taxonomy_id = c.term_id WHERE a.`post_author` = '678' and a.post_type ='fast_ticket' and a.fb_review='0' group by ID DESC
 
+             //let usernameQuery1 = "SELECT * FROM `wp_posts`  WHERE `post_author` = '" + userid + "' and post_type ='fast_ticket' and fb_review='"+fbbackstatus+"'"; 
+               
+             let usernameQuery1 = "SELECT * FROM `wp_posts` a inner join `wp_term_relationships` b on a.ID=b.object_id  inner join wp_terms c on b.term_taxonomy_id = c.term_id WHERE a.`post_author` =  '" + userid + "'  and a.post_type ='fast_ticket' and a.fb_review='"+fbbackstatus+"' group by ID DESC"; 
 
-  
-
-             let usernameQuery1 = "SELECT * FROM `wp_posts`  WHERE `post_author` = '" + userid + "' and post_type ='fast_ticket' and fb_review='"+fbbackstatus+"'";        
              console.log("usernameQuery1==",usernameQuery1)      
              db.query(usernameQuery1, (err1, result1) => {        
                  if (err1) {
@@ -697,13 +699,13 @@ if(BackStatus == 'open'){
                 PostID=result1[i].ID;
                 PostDate=dateFormat(result1[i].post_date, "dddd, mmmm dS, yyyy, h:MM:ss TT");
                 PostTitle=result1[i].post_title;
-if(result1[i].post_title==0){
+if(result1[i].fb_review==0){
   fbfinalstatus="open";
 }
-if(result1[i].post_title==1){
-  fbfinalstatus="closed";
+if(result1[i].fb_review==1){
+  fbfinalstatus="closed"; 
 }    
-                final_array.push({ TermName:"", PostTitle:PostTitle,PostDate:PostDate,PostID:PostID,Usrauther:Usrauther,image:"",NewPost:NewPost,status:fbfinalstatus,comment_hour:0,reviewStatus:result1[i].comment_status });  
+                final_array.push({ TermName:"", PostTitle:PostTitle,PostDate:PostDate,PostID:PostID,Usrauther:Usrauther,image:"",NewPost:NewPost,status:fbfinalstatus,comment_hour:0,reviewStatus:result1[i].slug });  
 /*
                 let usernameQuery2 = "SELECT * FROM `wp_term_relationships` WHERE `object_id`='"+result1[i].ID+"'";     
                   db.query(usernameQuery2, (err2, result2) => {
