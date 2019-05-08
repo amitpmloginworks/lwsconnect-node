@@ -16,8 +16,8 @@ module.exports = {
         let usernameQuery1 = " SELECT * FROM `wp_hours` WHERE `user_id` = '"+userid+"'";     
     db.query(usernameQuery1, (err, result) => {  
         if (err) {    
-        return res.status(200).json({status :200,TotalHours:TotalHours,BalanceHours:BalanceHours,wpstatus:0});
-        }  
+        return res.status(500).json({status :500,TotalHours:TotalHours,BalanceHours:BalanceHours,wpstatus:0});
+        }    
         TotalHours= result[0].total_hours;  
         BalanceHours= result[0].balance_hours;  
         return res.status(200).json({status :200,TotalHours:TotalHours,BalanceHours:BalanceHours,wpstatus:1});
@@ -101,6 +101,17 @@ notificationIDwp:(req, resf) => {
 }, 
 
 
+
+getcountry:(req, res) => {   
+  let userid=req.body.userid; 
+  let usernameQuery1 = "SELECT * FROM `wp_country`";     
+  db.query(usernameQuery1, (err, result) => {  
+    if (err) {   
+      return res.status(500).json({ status :500, err:err, message:"", wpstatus:-1 });    
+    }  
+    return res.status(200).json({ status :200, message:"Data received successfully.", countryarr:result, wpstatus:1 }); 
+}); 
+},  
 
 
 

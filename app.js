@@ -1,10 +1,9 @@
  
-
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
-const path = require('path');
+const path = require('path');  
 const app = express();
 
 const fs = require("fs");
@@ -13,14 +12,18 @@ var getIP = require('ipware')().get_ip;
 var varyyyy;     
 //const {getHomePage} = require('./routes/index'); 
 //const {addPlayerPage, addPlayer, deletePlayer, editPlayer, editPlayerPage} = require('./routes/player');
-const { getloginwp, getresetwp , testapp , upprofilewp, getprofilewp, upprofileimgwp, paymentwp, BuyAdditionalwp, uponesignalwp,getnotifywp } = require('./routes/securitydetail');         
-const { taskcatwp } = require('./routes/task');   
-const { mytaskwp, mytaskreplywp, mytasklistwp, tasksrcwp, taskimgwp , taskoncomwp } = require('./routes/task');
+
+const { getloginwp, getresetwp , testapp , upprofilewp, getprofilewp } = require('./routes/securitydetail');   
+
+const {  upprofileimgwp, paymentwp, BuyAdditionalwp, uponesignalwp,getnotifywp, getPayFailwp } = require('./routes/securitydetail');   
+  
+const { taskcatwp, tasknotifyUp } = require('./routes/task');   
+const { mytaskwp, mytaskreplywp, mytasklistwp, tasksrcwp, taskimgwp , taskoncomwp, taskactiveDashwp } = require('./routes/task');
 const { taskcreatewp, taskfimgwp, taskactivewp } = require('./routes/task');   
 const { taskrightside } = require('./routes/task');   
 const { taskfeedback, TaskApproveDis } = require('./routes/task'); 
 
-const { dashboardwp, notificationwp } = require('./routes/other');  
+const { dashboardwp, notificationwp, getcountry } = require('./routes/other');  
 
 const port = 3555;       
 var localStorage = require('localStorage')       
@@ -118,6 +121,8 @@ app.post('/imageUpload',taskimgwp);
 
 app.post('/taskactive',taskactivewp);  
 
+app.post('/taskactivedash',taskactiveDashwp); 
+
 app.post('/taskoncomp',taskoncomwp);   
 
 app.post('/taskrightside',taskrightside); 
@@ -140,7 +145,19 @@ app.post('/buyadditional',BuyAdditionalwp);
 
 app.post('/uponesignal',uponesignalwp); 
 
-app.post('/getnotify',getnotifywp);  
+app.post('/getnotify',getnotifywp); 
+
+app.post('/getcountry',getcountry); 
+
+app.post('/payfail',getPayFailwp);
+
+app.post('/tasknotifyup',tasknotifyUp);  
+
+
+
+
+
+
 
 // set the app to listen on the port
 app.listen(port, () => {   

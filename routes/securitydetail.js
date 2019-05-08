@@ -191,7 +191,7 @@ module.exports = {
   getprofilewp:(req, res) => {      
 
     let userid = req.body.userid;  
-
+  
     let usernameQuery = "SELECT * FROM `wp_users` WHERE ID = '" + userid + "'";          
     db.query(usernameQuery, (err, result) => {       
         if (err) {  return res.status(500).json({ message: 'errr5', status :500, msg:err, wpstatus:-1  });   }
@@ -199,16 +199,44 @@ module.exports = {
           let Qry1 = "SELECT * FROM `wp_usermeta` WHERE user_id = '" + userid + "'";         
           db.query(Qry1, (err1, result1) => {   
             if (err1) {  return res.status(500).json({ message: 'errr5', status :500, msg:err1, wpstatus:-1  });   }
-            if (result1.length > 0) {
-              console.log("result1==",result1); 
+            if (result1.length > 0) { 
               return res.status(200).json({ status :200, message:"Profile updated successfully." , wpstatus:1, getdata:result1  }); 
            }
           }); 
         } 
-        else {  
+        else {   
            return res.status(200).json({  message: 'you are not authorized to use', status :200, wpstatus:0  }); 
     }  
     });
+},
+
+getPayFailwp:(req, res) => {  
+ 
+  let userid = req.body.userid;  
+  let paymode = req.body.paymode;  
+  let failreson = req.body.failreson;  
+  let amount = req.body.amount;  
+  let planname = req.body.planname;   
+  let tf_paystatus=  req.body.paystatus; 
+
+  let paymentid = req.body.paymentid;   
+  let PaidDate=  req.body.PaidDate; 
+     
+  //let usernameQuery = "SELECT * FROM `wp_users` WHERE ID = '" + userid + "'";          
+  //db.query(usernameQuery, (err, result) => {       
+      //if (err) {  return res.status(500).json({ message: 'errr5', status :500, msg:err, wpstatus:-1  });   }
+      //if (result.length > 0) {
+        var now = new Date().toLocaleString('en-AU', { timeZone: 'Asia/Kolkata' });
+        var CurrentDate = dateFormat(now, "yyyy-mm-dd HH:MM:ss"); 
+        let Qry1 = "insert into `wp_transaction_failure` set tf_userid = '" + userid + "',tf_paymode='" + paymode + "',tf_failreason='" + failreson + "',tf_datetime='" + CurrentDate + "',tf_amount='" + amount + "',tf_plan='" + planname + "',tf_paystatus='" + tf_paystatus + "',tf_transactionid='"+paymentid+"',tf_transactiondate='"+PaidDate+"'";    
+        console.log("Qry1==",Qry1);         
+        db.query(Qry1, (err1, result1) => {   
+          if (err1) {  return res.status(500).json({ message: 'errr5', status :500, msg:err1, wpstatus:-1  });   }
+            return res.status(200).json({ status :200, message:"Payment failed." , wpstatus:1  }); 
+        }); 
+     // } 
+  //else {   return res.status(200).json({  message: 'you are not authorized to use', status :200, wpstatus:0  });   }  
+  //});
 },
 
 
@@ -246,11 +274,13 @@ getnotifywp:(req, res) => {
         let Qry1 = "select * from  `wp_notification` WHERE notify_user_id = '" + userid + "' order by  notify_id DESC";          
         db.query(Qry1, (err1, result1) => {   
           if (err1) {  return res.status(500).json({ message: 'errr5', status :500, msg:err1, wpstatus:-1  });   }
-          if (result1.length > 0) {
-            console.log("result1==",result1); 
+          if (result1.length > 0) {    
             let Qry2 = "update `wp_notification` set notify_read='1' WHERE notify_user_id = '" + userid + "'";          
             db.query(Qry2, (err2, result2) => {   if (err2) {    }   });      
             return res.status(200).json({ status :200, message:"Data recevied successfully." , wpstatus:1, getdata:result1  });    
+         }
+         else {
+          return res.status(200).json({ status :200, message:"Data recevied successfully." , wpstatus:1, getdata:result1  });   
          }
         }); 
       } 
