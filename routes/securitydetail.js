@@ -7,7 +7,7 @@ var localStorage = require('localStorage')
 const uniqueRandom = require('unique-random');
 const randunique = uniqueRandom(10000000000, 99999999999);
 
-var Urllinks="http://ec2-13-58-246-109.us-east-2.compute.amazonaws.com:3555"; 
+var Urllinks="http://ec2-13-58-246-109.us-east-2.compute.amazonaws.com:3555";   
 
 module.exports = { 
 
@@ -298,23 +298,20 @@ upprofileimgwp:(req, res) => {
   db.query(usernameQuery, (err, result) => {       
       if (err) {  return res.status(500).json({ message: 'errr5', status :500, msg:err, wpstatus:-1  });   }
       if (result.length > 0) {
-  let uploadedFile = req.files.file;
+  let uploadedFile = req.files.file; 
   let fileName = uploadedFile.name;   
   let fileExtension = uploadedFile.mimetype.split('/')[1]; 
   console.log("fileExtension==",fileExtension);   
   uploadedFile.mv(`public/assets/img/${fileName}`, (err ) => {    
     if (err) {  return res.status(500).json({ message: 'errr5',status :500,msg:err,wpstatus:0 });  }
-    profileimg=Urllinks+"/assets/img/"+fileName;   
+    //profileimg=Urllinks+"/assets/img/"+fileName;   
+    profileimg="/assets/img/"+fileName;     
         let Qry11 = "SELECT * from `wp_usermeta` where meta_key='_attachments' and user_id = '" + userid + "'";         
         db.query(Qry11, (err11, result11) => {    
           if (result11.length > 0) {
             let Qry12 = "UPDATE `wp_usermeta` SET meta_value='"+profileimg+"'  WHERE user_id = '" + userid + "' and meta_key='_attachments'";     
             db.query(Qry12, () => {   });
           }
-          // else {       
-          //   let Qry13 = "INSERT INTO `wp_usermeta` SET meta_value='"+profileimg+"', user_id = '" + userid + "', meta_key='_attachments'"; 
-          //   db.query(Qry13, () => {   });
-          // }
         });  
       return res.status(200).json({status :200,message:"Profile updated successfully.",wpstatus:1,image:profileimg });   
     }); 

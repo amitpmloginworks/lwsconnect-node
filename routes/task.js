@@ -6,7 +6,7 @@ var localStorage = require('localStorage')
 
 const uniqueRandom = require('unique-random');
 const randunique = uniqueRandom(10000000000, 99999999999);
-//var Urllinks="http://182.156.204.228:3555"; 
+//var Urllinks="http://182.156.204.228:3555";        
 var Urllinks="http://ec2-13-58-246-109.us-east-2.compute.amazonaws.com:3555"; 
 module.exports = {  
  
@@ -36,9 +36,10 @@ module.exports = {
       let imgmetaext="";
     
       let Usrimgleft="";
-      let usridleft="";
+      let usridleft="";    
     
-      let usernameQuery = " SELECT * FROM `wp_comments` WHERE `comment_post_ID` = '" + wppostID + "' group by DATE_FORMAT(comment_date,'%y-%m-%d')";    
+      let usernameQuery = " SELECT * FROM `wp_comments` WHERE `comment_post_ID` = '" + wppostID + "' group by DATE_FORMAT(comment_date,'%y-%m-%d')";  
+      console.log("usernameQuery==",usernameQuery);  
       db.query(usernameQuery, (err1, result1) => {        
           if (err1) {
              return res.status(500).json({ message: 'errr5', status :500, msg:err1 });
@@ -70,16 +71,19 @@ module.exports = {
 
                     if(result[i].comment_img != null) { 
                       imgmetavalue=result[i].comment_img;    
-                      imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1];
+                      //imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1];
+                      imgmetatitle=imgmetavalue.split('/assets/img/')[1];
                       let fileext=imgmetatitle.split('.')[1];
                       imgmetaext="."+fileext;   
                      }       
-               
-                     Usrimgleft=result[i].meta_value;   
+               if(result[i].meta_value != ""){
+                Usrimgleft=Urllinks+result[i].meta_value;   
+               }
+                     
 
                     if(i==0 && getdescription == 0) {  
-                      if(result[i].comment_description != "") {        
-                        second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:"Task Description : "+result[i].comment_description,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"),styleClass:styleClassvar,hands:handsvar, wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:imgmetavalue,Usrimgleft:Usrimgleft });  
+                      if(result[i].comment_description != "" ) {               
+                        second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:"Task Description : "+result[i].comment_description,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"),styleClass:styleClassvar,hands:handsvar, wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:Urllinks+imgmetavalue,Usrimgleft:Usrimgleft });  
                         imgmetavalue="";  
                         imgmetatitle=""; 
                         imgmetaext=""; 
@@ -98,21 +102,25 @@ module.exports = {
                  
                   if(result[i].comment_img != null) { 
                     imgmetavalue=result[i].comment_img;    
-                    imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1];
+                   // imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1];
+                    imgmetatitle=imgmetavalue.split('/assets/img/')[1];
                     let fileext=imgmetatitle.split('.')[1];
                     imgmetaext="."+fileext;   
                    }       
              
-                   Usrimgleft=result[i].meta_value;    
-                   if(i!=0){
+                   if(result[i].meta_value != ""){
+                    Usrimgleft=Urllinks+result[i].meta_value;   
+                   }
+                     
+                   if(i!=0 || getdescription==1)  {    
                     getdescription=1;
-                   second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"),styleClass:styleClassvar,hands:handsvar, wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:imgmetavalue,Usrimgleft:Usrimgleft });       
+                   second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"),styleClass:styleClassvar,hands:handsvar, wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:Urllinks+imgmetavalue,Usrimgleft:Usrimgleft });       
     
                    imgmetavalue="";  
                    imgmetatitle=""; 
                    imgmetaext=""; 
                    Usrimgleft="";
-                   }
+                   }   
     /*
             let usernameQuery301="SELECT * FROM `wp_commentmeta` where comment_id='" +result[i].comment_ID + "'";  
                 db.query(usernameQuery301, (err301, result301) => {
@@ -633,7 +641,8 @@ let metaarrval;
               }
 
               // if post conntent will not be blank after that it will be call to wp_comments table .
-  if(postcontent !=""){
+  if(postcontent !="<p><p>") {  
+    console.log("if cons..")
   var strIP = localStorage.getItem('ipInfo');   
   var strIPClient = JSON.parse(strIP).clientIp;  
   let usernameQuery3 = "INSERT INTO `wp_comments` ( `comment_post_ID`, `comment_author`, `comment_author_email`, `comment_author_url`, `comment_author_IP`, `comment_date`, `comment_date_gmt`, `comment_content`, `comment_karma`, `comment_approved`, `comment_agent`, `comment_type`, `comment_parent`, `user_id`,comment_description) VALUES ('" +
@@ -645,8 +654,10 @@ let metaarrval;
   commentID=result3.insertId; 
   return res.status(200).json({  message: "Your task has been saved successfully.", status :200, wpstatus:1 , commentID:commentID }); 
 }); 
-}   
+} 
+
 else {
+  console.log("else cons..")  
   return res.status(200).json({  message: "Your task has been saved successfully.", status :200, wpstatus:1 , commentID:"" });    
 }
 
@@ -685,7 +696,8 @@ else {
 
     var now = new Date().toLocaleString('en-AU', { timeZone: 'Asia/Kolkata' });
     datecurrent = dateFormat(now, "yyyy-mm-dd HH:MM:ss");
-    let finalimglink=Urllinks+"/assets/img/"+ fileName;
+    let finalimglink="/assets/img/"+ fileName;
+    //let finalimglink=Urllinks+"/assets/img/"+ fileName;
                   let usernameQuery1 = "INSERT INTO `wp_posts` (`post_author`, `post_date`, `post_date_gmt`, `post_content`, `post_title`, `post_excerpt`,`post_status`, `comment_status`, `ping_status`,`post_password`, `post_name`, `to_ping`,`pinged`, `post_modified`, `post_modified_gmt`,`post_content_filtered`, `post_parent`, `guid`,`menu_order`, `post_type`, `post_mime_type`, `comment_count`) VALUES('" + userid + "','" + datecurrent + "','" + datecurrent + "','','" + fileName + "','','inherit','open','closed','','" + fileName + "','','','" + datecurrent + "','" + datecurrent + "','','0','"+finalimglink+"','0','attachment','image/jpg','0' )"; 
       db.query(usernameQuery1, (err1, result1) => {        
       if (err1) { return res.status(500).json({ message: 'errr5', status :500, msg:err1, wpstatus:0 });  }
@@ -701,11 +713,7 @@ else {
       });
         return res.status(200).json({ userid:userid, fileName:fileName, image:fileName }); 
   });
-  
-  //return res.status(200).json({ userid:userid, fileName:fileName, image:fileName }); 
-  
 });
-
 },
  
 
@@ -942,12 +950,13 @@ var now = new Date().toLocaleString('en-AU', { timeZone: 'Asia/Kolkata' });
         var datecurrent = dateFormat(result[i].comment_date, "dd mmm yyyy");
         if(result[i].comment_img != null) { 
           imgmetavalue=result[i].comment_img;    
-          imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1];
+          //imgmetatitle=imgmetavalue.split(Urllinks+'/assets/img/')[1];
+          imgmetatitle=imgmetavalue.split('/assets/img/')[1];
           let fileext=imgmetatitle.split('.')[1];
           imgmetaext="."+fileext;   
          } 
         third_array.push(result[i].comment_ID);
-                 second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"), wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:imgmetavalue,datecurrent:datecurrent,comment_hour:result[i].comment_hour });  
+                 second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"), wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:Urllinks+imgmetavalue,datecurrent:datecurrent,comment_hour:result[i].comment_hour });  
     
                  let Query1 = "SELECT * FROM `hours_spent`  WHERE hs_postid = '" + wppostID + "' order by hs_id DESC";     
                  console.log("Query1==",Query1);  
