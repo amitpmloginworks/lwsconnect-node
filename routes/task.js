@@ -6,8 +6,8 @@ var localStorage = require('localStorage')
 
 const uniqueRandom = require('unique-random');
 const randunique = uniqueRandom(10000000000, 99999999999);
-//var Urllinks="http://182.156.204.228:3555";        
-var Urllinks="http://ec2-13-58-246-109.us-east-2.compute.amazonaws.com:3555"; 
+//var Urllinks="http://182.156.204.228:3555";         
+var Urllinks="http://ec2-18-223-235-36.us-east-2.compute.amazonaws.com:3555"; 
 module.exports = {  
  
 
@@ -38,8 +38,7 @@ module.exports = {
       let Usrimgleft="";
       let usridleft="";    
     
-      let usernameQuery = " SELECT * FROM `wp_comments` WHERE `comment_post_ID` = '" + wppostID + "' group by DATE_FORMAT(comment_date,'%y-%m-%d')";  
-      console.log("usernameQuery==",usernameQuery);  
+      let usernameQuery = " SELECT * FROM `wp_comments` WHERE `comment_post_ID` = '" + wppostID + "' group by DATE_FORMAT(comment_date,'%y-%m-%d')";   
       db.query(usernameQuery, (err1, result1) => {        
           if (err1) {
              return res.status(500).json({ message: 'errr5', status :500, msg:err1 });
@@ -81,7 +80,7 @@ module.exports = {
                }
                      
 
-                    if(i==0 && getdescription == 0) {  
+                   // if(i==0 && getdescription == 0) {  
                       if(result[i].comment_description != "" ) {               
                         second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:"Task Description : "+result[i].comment_description,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"),styleClass:styleClassvar,hands:handsvar, wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:Urllinks+imgmetavalue,Usrimgleft:Usrimgleft });  
                         imgmetavalue="";  
@@ -89,7 +88,7 @@ module.exports = {
                         imgmetaext=""; 
                         Usrimgleft="";
                       }
-                    }
+                   // }
                     
 
                   }
@@ -111,9 +110,11 @@ module.exports = {
                    if(result[i].meta_value != ""){
                     Usrimgleft=Urllinks+result[i].meta_value;   
                    }
-                     
-                   if(i!=0 || getdescription==1)  {    
+                     console.log("Usrimgleft==",Usrimgleft); 
+                   //if(i!=0 || getdescription==1)   { 
+                    if(result[i].comment_description == "")   {       
                     getdescription=1;
+                    console.log("llll") 
                    second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"),styleClass:styleClassvar,hands:handsvar, wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:Urllinks+imgmetavalue,Usrimgleft:Usrimgleft });       
     
                    imgmetavalue="";  
@@ -144,12 +145,12 @@ module.exports = {
             incrementval++       
               }  // for loop   of table wp_commentmeta  
     
-              if(result.length===incrementval){
+              if(result.length===incrementval) {
                 final_array.push({ modifydate:datemodify, second_array:second_array }); 
               }
               
-              if(final_array.length ==j){ 
-                getdescription=0;      
+              if(final_array.length ==j) { 
+                //getdescription=0;        
                   return res.status(200).json({ status :200, final_array:final_array });   
               }     
              });  
@@ -192,7 +193,7 @@ mytaskreplywp:(req, res) =>   {
                   return res.status(500).json({ message: 'errr5', status :500, msg:err1, wpstatus:0 });
                }
                if (result1.length > 0) { 
-                //let Query2="update `wp_comments` set read_comment='1'  ORDER BY comment_ID DESC LIMIT 1"; 
+
                 let Query2="update `wp_comments` set read_comment='1' where `comment_post_ID` = '" + wppostID + "' and user_id='1'";  
                 db.query(Query2,(err33,result33) =>{ 
                   if (err33) { 
@@ -202,8 +203,7 @@ mytaskreplywp:(req, res) =>   {
 
                 var now = new Date().toLocaleString('en-AU', { timeZone: 'Asia/Kolkata' });
                 datecurrent = dateFormat(now, "yyyy-mm-dd HH:MM:ss"); 
-                let usernameQuery2 = "UPDATE `wp_posts` SET  `post_date_gmt`='" + datecurrent + "', `post_content`=concat('"+postcontent+"',ifnull(post_content,'')), `comment_count`=comment_count+1 WHERE ID='" +
-                wppostID + "'";     
+                let usernameQuery2 = "UPDATE `wp_posts` SET  `post_date_gmt`='" + datecurrent + "', `post_content`=concat('"+postcontent+"',ifnull(post_content,'')), `comment_count`=comment_count+1 WHERE ID='" + wppostID + "'";       
                 db.query(usernameQuery2, (err2, result2) => {
                 if (err2) {
                     return res.status(500).json({ message: 'errr', status :500, wpstatus:0 });
@@ -211,8 +211,7 @@ mytaskreplywp:(req, res) =>   {
                 var strIP = localStorage.getItem('ipInfo');   
                 var strIPClient = JSON.parse(strIP).clientIp; 
 
-                let usernameQuery3 = "INSERT INTO `wp_comments` ( `comment_post_ID`, `comment_author`, `comment_author_email`, `comment_author_url`, `comment_author_IP`, `comment_date`, `comment_date_gmt`, `comment_content`, `comment_karma`, `comment_approved`, `comment_agent`, `comment_type`, `comment_parent`, `user_id`) VALUES ('" +
-                wppostID + "', '" + Usrauther + "', '" + Usremail + "', '" + Usrurl + "', '" + strIPClient + "', '" + datecurrent + "', '" + datecurrent + "','"+ postcontent + "', '0', '1', '', '', '0', '" + userid + "')";    
+                let usernameQuery3 = "INSERT INTO `wp_comments` ( `comment_post_ID`, `comment_author`, `comment_author_email`, `comment_author_url`, `comment_author_IP`, `comment_date`, `comment_date_gmt`, `comment_content`, `comment_karma`, `comment_approved`, `comment_agent`, `comment_type`, `comment_parent`, `user_id`) VALUES ('" + wppostID + "', '" + Usrauther + "', '" + Usremail + "', '" + Usrurl + "', '" + strIPClient + "', '" + datecurrent + "', '" + datecurrent + "','"+ postcontent + "', '0', '1', '', '', '0', '" + userid + "')";    
                 db.query(usernameQuery3, (err3, result3) => {
                 if (err3) {
                     return res.status(500).json({ message: 'errr', status :500, wpstatus:0 });
@@ -221,7 +220,28 @@ mytaskreplywp:(req, res) =>   {
                 return res.status(200).json({  message: "Your message has been successfully sent.", status :200, wpstatus:1,currenttime:dateFormat(datecurrent, "h:MM TT"),currentdate:datecurrent,commentID:commentID  });    
             }); 
             }); 
-               }
+            }
+            else {
+              var now = new Date().toLocaleString('en-AU', { timeZone: 'Asia/Kolkata' });
+              datecurrent = dateFormat(now, "yyyy-mm-dd HH:MM:ss"); 
+              let usernameQuery2 = "UPDATE `wp_posts` SET  `post_date_gmt`='" + datecurrent + "', `post_content`=concat('"+postcontent+"',ifnull(post_content,'')), `comment_count`=comment_count+1 WHERE ID='" + wppostID + "'";     
+              db.query(usernameQuery2, (err2, result2) => {
+              if (err2) {
+                  return res.status(500).json({ message: 'errr', status :500, wpstatus:0 });
+              }
+              var strIP = localStorage.getItem('ipInfo');   
+              var strIPClient = JSON.parse(strIP).clientIp; 
+
+              let usernameQuery3 = "INSERT INTO `wp_comments` ( `comment_post_ID`, `comment_author`, `comment_author_email`, `comment_author_url`, `comment_author_IP`, `comment_date`, `comment_date_gmt`, `comment_content`, `comment_karma`, `comment_approved`, `comment_agent`, `comment_type`, `comment_parent`, `user_id`) VALUES ('" +wppostID + "', '" + Usrauther + "', '" + Usremail + "', '" + Usrurl + "', '" + strIPClient + "', '" + datecurrent + "', '" + datecurrent + "','"+ postcontent + "', '0', '1', '', '', '0', '" + userid + "')";    
+              db.query(usernameQuery3, (err3, result3) => {
+              if (err3) {
+                  return res.status(500).json({ message: 'errr', status :500, wpstatus:0 });
+              }
+              commentID=result3.insertId;   
+              return res.status(200).json({  message: "Your message has been successfully sent.", status :200, wpstatus:1,currenttime:dateFormat(datecurrent, "h:MM TT"),currentdate:datecurrent,commentID:commentID  });    
+          }); 
+          }); 
+            }   
            });      
         } 
         else {      
