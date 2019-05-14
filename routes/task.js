@@ -107,7 +107,7 @@ module.exports = {
                     imgmetaext="."+fileext;   
                    }       
                    Usrimgleft=""; 
-                   if(result[i].meta_value != ""){
+                   if(result[i].meta_value != "") {
                     Usrimgleft=Urllinks+result[i].meta_value;   
                    }
                      console.log("Usrimgleft==",Usrimgleft); 
@@ -736,13 +736,14 @@ else {
 });
 },
  
-
+  
 taskoncomwp:(req, res) =>  { 
   var final_array= new Array();
 var fbbackstatus="";
 var fbfinalstatus;
     let userid=req.body.userid;
     let BackStatus=req.body.status;
+    let Hourspent=0
     console.log("",BackStatus)
 if(BackStatus == 'closed'){
   fbbackstatus=1;
@@ -794,6 +795,7 @@ let slug;
                 PostID=result1[i].ID;
                 PostDate=dateFormat(result1[i].post_date, "dddd, mmmm dS, yyyy, h:MM:ss TT");
                 PostTitle=result1[i].post_title;
+                Hourspent= result1[i].hours_spent ;
                 slug=result1[i].slug
 if(result1[i].fb_review==0){
   fbfinalstatus="open";
@@ -813,7 +815,7 @@ if(result1[i].fb_review==1){
 //     }  
 //     else {
          
-      final_array.push({ TermName:"", PostTitle:PostTitle,PostDate:PostDate,PostID:PostID,Usrauther:Usrauther,image:"",NewPost:NewPost,status:fbfinalstatus,comment_hour:0,reviewStatus:slug });    
+      final_array.push({ TermName:"", PostTitle:PostTitle,PostDate:PostDate,PostID:PostID,Usrauther:Usrauther,image:"",NewPost:NewPost,status:fbfinalstatus,comment_hour:Hourspent,reviewStatus:slug });    
 //     }          
 // });
 
@@ -948,6 +950,8 @@ var second_array= new Array();
 var third_array= new Array();
  
 var third_array1 = new Array();
+
+var hour_array= new Array();
 var now = new Date().toLocaleString('en-AU', { timeZone: 'Asia/Kolkata' });
 
   let wppostID = req.body.postid;
@@ -975,15 +979,27 @@ var now = new Date().toLocaleString('en-AU', { timeZone: 'Asia/Kolkata' });
           let fileext=imgmetatitle.split('.')[1];
           imgmetaext="."+fileext;   
          } 
-        third_array.push(result[i].comment_ID);
-                 second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"), wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:Urllinks+imgmetavalue,datecurrent:datecurrent,comment_hour:result[i].comment_hour });  
+        third_array.push(result[i].comment_ID); 
+        console.log(dateFormat(result[i].comment_hour, "d mmm yyyy, H:MM")) 
+                 second_array.push({ comment_ID:result[i].comment_ID,comment_post_ID:result[i].comment_post_ID,comment_author:result[i].comment_author,comment_author_email:result[i].comment_author_email,comment_date:result[i].comment_date,comment_content:result[i].comment_content,comment_approved:result[i].comment_approved,comment_parent:result[i].comment_parent,user_id:result[i].user_id,posttime:dateFormat(result[i].comment_date, "h:MM tt"), wptitle:imgmetatitle,wpextension:imgmetaext,wpurl:Urllinks+imgmetavalue,datecurrent:datecurrent,comment_hour: result[i].comment_hour });      
     
                  let Query1 = "SELECT * FROM `hours_spent`  WHERE hs_postid = '" + wppostID + "' order by hs_id DESC";     
                  console.log("Query1==",Query1);  
                  db.query(Query1, (err11, result111) => {          
                      if (err11)   {  return res.status(500).json({ message: 'errr5', status :500, msg:err11 });     }
                      console.log("result111==",result111) 
-                     return res.status(200).json({ status :200, wpstatus:1 , final_array:second_array,PostStatus:PostStatus,final_hours:result111 });         
+                     if(result111.length > 0) {
+                    for(let j=0;j<result111.length;j++) {
+                      hour_array.push({ hour_spent:result111[j].hour_spent,hs_comment:result111[j].hs_comment,hs_dates: dateFormat(result111[j].hs_dates, "d mmm yyyy"),hs_id:result111[j].hs_id,hs_postid:result111[j].hs_postid });  
+                        if(j==result111.length-1)
+                        {
+                          return res.status(200).json({ status :200, wpstatus:1 , final_array:second_array,PostStatus:PostStatus,final_hours:hour_array });   
+                        }
+                    }
+                    }
+                    else {
+                      return res.status(200).json({ status :200, wpstatus:1 , final_array:second_array,PostStatus:PostStatus,final_hours:hour_array }); 
+                    }          
                 });
 
               
