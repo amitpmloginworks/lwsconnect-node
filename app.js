@@ -141,6 +141,8 @@ app.post('/profileimg',upprofileimgwp);
 
 app.post('/payment',paymentwp);
 
+app.post('/payfail',getPayFailwp);  
+
 app.post('/buyadditional',BuyAdditionalwp);  
 
 app.post('/uponesignal',uponesignalwp); 
@@ -148,8 +150,6 @@ app.post('/uponesignal',uponesignalwp);
 app.post('/getnotify',getnotifywp); 
 
 app.post('/getcountry',getcountry); 
-
-app.post('/payfail',getPayFailwp);
 
 app.post('/tasknotifyup',tasknotifyUp);  
 
