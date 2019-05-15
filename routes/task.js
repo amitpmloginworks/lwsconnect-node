@@ -194,7 +194,8 @@ mytaskreplywp:(req, res) =>   {
                }
                if (result1.length > 0) { 
 
-                let Query2="update `wp_comments` set read_comment='1' where `comment_post_ID` = '" + wppostID + "' and user_id='1'";  
+                let Query2="update `wp_comments` set read_comment='1' where `comment_post_ID` = '" + wppostID + "' and user_id='1'"; 
+                console.log("Query2==",Query2);   
                 db.query(Query2,(err33,result33) =>{ 
                   if (err33) { 
                     return res.status(500).json({ message: 'errr', status :500, wpstatus:0 }); 
@@ -281,7 +282,7 @@ mytasklistwp:(req, res) =>   {
             Usrurl=result[0].user_url; 
 
              let usernameQuery1 = " SELECT * FROM `wp_posts`  WHERE `post_author` = '" + userid + "' and post_type ='fast_ticket' order by ID desc";   
-              
+              console.log("==",usernameQuery1);   
              db.query(usernameQuery1, (err1, result1) => {        
                  if (err1) {
                     return res.status(500).json({ message: 'errr5', status :500, msg:err1, wpstatus:0 });
@@ -308,9 +309,14 @@ mytasklistwp:(req, res) =>   {
                 } 
                 TermName=result3[0].name;
                 var finalindex="";
+
+                console.log(final_array)
+
+                  
                final_array.forEach((number, index) =>  {   
                 if(number.PostID == result2[1].object_id)  {
                 let usernameQry = "SELECT * FROM `wp_posts` a join wp_comments b on a.ID=b.comment_post_ID WHERE a.`post_author` = '"+userid+"' and b.user_id !='"+userid+"' and a.post_content !='' and b.read_comment='0' and a.ID='"+number.PostID+"'";  
+                console.log("usernameQry==",usernameQry);   
                 db.query(usernameQry, (e1, res1) => {   if (e1) {  }    
                 NewPost = res1.length;  
                 final_array[index].NewPost=NewPost;      
@@ -318,7 +324,9 @@ mytasklistwp:(req, res) =>   {
                finalindex=index; 
                return index; 
                 }  
-              }); 
+              });    
+
+
                 final_array[finalindex].TermName=TermName;   
                 console.log("TermName==",TermName); 
                 // final_array.push({ TermName:TermName, PostTitle:result1[i].post_title,PostDate:dateFormat(result1[i].post_date, "dddd, mmmm dS, yyyy, h:MM:ss TT"),PostID:result1[i].ID,Usrauther:result[0].user_nicename,image:"" }); 
@@ -1034,8 +1042,25 @@ taskfeedback:(req, res) =>   {
                db.query(qry2, (er2, result2) => {              
                   if (er2) {
                     return res.status(500).json({ message: 'errr5', status :500, msg:er2,wpstatus:0 });
-                  }          
-                  return res.status(200).json({ status :200, message:"Data saved successfully.",wpstatus:1 });
+                  }
+                  let qry4 = "select * from  `wp_term_relationships` WHERE `object_id` = '" + postid + "' limit 0,1";    
+                  db.query(qry4, (er4, result4) => {              
+                     if (er4) {
+                       return res.status(500).json({ message: 'errr5', status :500, msg:er4,wpstatus:0 });
+                     }
+                     if(result4.length == 0){
+                      return res.status(200).json({ status :200, message:"Data saved successfully.",wpstatus:1 });
+                     }
+                     else {  
+                      let qry3 = "update `wp_term_relationships` set term_taxonomy_id='23' WHERE `object_id` = '" + postid + "' and term_taxonomy_id='22'";    
+                      db.query(qry3, (er3, result3) => {              
+                         if (er3) {
+                           return res.status(500).json({ message: 'errr5', status :500, msg:er3,wpstatus:0 });
+                         }  
+                         });    
+                         return res.status(200).json({ status :200, message:"Data saved successfully.",wpstatus:1 });
+                     }
+                     }); 
                }); 
            }); 
         } 

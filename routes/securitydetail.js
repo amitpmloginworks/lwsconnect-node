@@ -295,8 +295,10 @@ upprofileimgwp:(req, res) => {
   
   
 testapp:(req, res) =>   {
+    
   let agent_array =[]; 
   let metaarrval ;
+     
   let Querycat = "SELECT * FROM `wp_termmeta` where term_id='29'"; 
     console.log("Querycat==",Querycat)  
     db.query(Querycat, (err1, result1) => {        
@@ -305,15 +307,15 @@ testapp:(req, res) =>   {
         } 
         if (result1.length > 0) {
            
-          var metaarr = result1[0].meta_value; 
-          console.log("result1[0].meta_value==",result1[0].meta_value)    
-          var metasplit = metaarr.split("\";");   
-          let metalen = metasplit.length-1; 
+  //         var metaarr = result1[0].meta_value; 
+  //         console.log("result1[0].meta_value==",result1[0].meta_value)    
+  //         var metasplit = metaarr.split("\";");   
+  //         let metalen = metasplit.length-1; 
 
-          let metasplit0 = metasplit[0].split('\:"'); 
-          agent_array.push(metasplit0[1]);
-          metaarrval=metasplit0[1];  
-          console.log("metaarrval==",metaarrval)  
+  //         let metasplit0 = metasplit[0].split('\:"'); 
+  //         agent_array.push(metasplit0[1]);
+  //         metaarrval=metasplit0[1];  
+  //         console.log("metaarrval==",metaarrval)  
 
           // for(let i=0;i<metalen.length;i++){    
           //     let metasplit0 = metasplit[i].split('\:"'); 
@@ -321,9 +323,15 @@ testapp:(req, res) =>   {
           //     metaarrval=metasplit0[1];
           //     console.log("metaarrval==",metaarrval)   
           // }
+
+
         } 
         else {  }
     });
+
+
+
+
 
   // var encrytpass = encrydecry.sha1algo(req.body.password); 
   // console.log("encrytpass==",encrytpass);
